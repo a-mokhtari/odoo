@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>گزارش تحلیل تطبیقی (Fit &amp; Gap) مدیریت عملکرد کارکنان</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css" rel="stylesheet" type="text/css" />
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+<style>
+  /* ================= استایل پایه ================= */
+  body { font-family: "Vazir", "Vazirmatn", Tahoma, sans-serif; font-size: 14pt; line-height: 2; margin: 2cm; color: #222; }
+  h1 { font-size: 20pt; text-align: center; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 16.5pt; font-weight: 700; margin: 0; border: none; padding: 0; color: #fff; line-height: 1.7; }
+  h3 { font-size: 14.5pt; font-weight: 700; margin: 22px 0 8px; color: #1f3864; display: flex; align-items: flex-start; gap: 10px; }
+  #report-content { perspective: 1200px; }
+  .report-box {
+    margin-top: 22px;
+    padding: 18px 16px 8px;
+    border-radius: 28px;
+    background:
+      linear-gradient(#f7f8fc, #f7f8fc) padding-box,
+      linear-gradient(135deg, #1b335c, #8b5cf6, #22c55e, #f59e0b) border-box;
+    border: 2px solid transparent;
+    box-shadow: 0 18px 50px rgba(31,56,100,.10);
+  }
+  .rsec {
+    --c1: #1b335c; --c2: #2a4a7a; --glow: rgba(27,51,92,.28); --ink: #1b335c;
+    position: relative;
+    background: #fff;
+    border-radius: 22px;
+    margin: 18px 0 22px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.6);
+    box-shadow: 0 12px 30px var(--glow);
+    transform: translateY(18px);
+    animation: rsec-in .7s cubic-bezier(.2,.8,.2,1) forwards;
+    transition: transform .35s ease, box-shadow .35s ease;
+  }
+  .rsec:nth-child(1) { --c1:#1b335c; --c2:#3d6cb5; --glow:rgba(27,51,92,.30); animation-delay:.02s; }
+  .rsec:nth-child(2) { --c1:#0f6e6a; --c2:#1aa6a0; --glow:rgba(15,110,106,.28); animation-delay:.08s; }
+  .rsec:nth-child(3) { --c1:#5b2d8e; --c2:#8b5cf6; --glow:rgba(91,45,142,.28); animation-delay:.14s; }
+  .rsec:nth-child(4) { --c1:#0e7a3d; --c2:#22c55e; --glow:rgba(14,122,61,.26); animation-delay:.2s; }
+  .rsec:nth-child(5) { --c1:#b45309; --c2:#f59e0b; --glow:rgba(180,83,9,.26); animation-delay:.26s; }
+  .rsec:nth-child(6) { --c1:#be123c; --c2:#fb7185; --glow:rgba(190,18,60,.26); animation-delay:.32s; }
+  .rsec:nth-child(7) { --c1:#1d4ed8; --c2:#38bdf8; --glow:rgba(29,78,216,.26); animation-delay:.38s; }
+  .rsec::before {
+    content: "";
+    position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 7px;
+    background: linear-gradient(180deg, #fff, var(--c2));
+    opacity: .9;
+  }
+  .rsec:hover {
+    transform: translateY(-7px) scale(1.012);
+    box-shadow: 0 22px 48px var(--glow);
+  }
+  .rsec-head {
+    width: 100%;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    color: #fff;
+    background: linear-gradient(120deg, var(--c1), var(--c2));
+    background-size: 160% 160%;
+    transition: background-position .5s ease, filter .3s ease;
+  }
+  .rsec-head:hover { background-position: 100% 0; filter: saturate(1.15) brightness(1.05); }
+  .rsec-num {
+    flex: 0 0 auto;
+    min-width: 50px; height: 50px; padding: 0 8px;
+    border-radius: 16px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.18);
+    border: 1px solid rgba(255,255,255,.35);
+    color: #fff;
+    font-weight: 800; font-size: 18pt; line-height: 1;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
+    transition: transform .45s cubic-bezier(.2,.8,.2,1);
+  }
+  .rsec.open .rsec-num { transform: rotate(-8deg) scale(1.06); }
+  .rsec-chev {
+    margin-inline-start: auto;
+    width: 34px; height: 34px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.16);
+    transition: transform .45s cubic-bezier(.2,.8,.2,1), background .3s;
+  }
+  .rsec-chev::before {
+    content: "";
+    width: 9px; height: 9px;
+    border-left: 2px solid #fff; border-bottom: 2px solid #fff;
+    transform: rotate(-45deg) translateY(-2px);
+  }
+  .rsec.open .rsec-chev { transform: rotate(180deg); background: rgba(255,255,255,.28); }
+  .rsec-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows .55s cubic-bezier(.2,.8,.2,1);
+    background:
+      radial-gradient(900px 180px at 100% 0, color-mix(in srgb, var(--c2) 16%, transparent), transparent 60%),
+      #fff;
+  }
+  .rsec.open .rsec-panel { grid-template-rows: 1fr; }
+  .rsec-body {
+    overflow: hidden;
+    padding: 0 22px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity .45s ease .05s, transform .5s cubic-bezier(.2,.8,.2,1), padding .45s ease;
+  }
+  .rsec.open .rsec-body { opacity: 1; transform: none; padding: 12px 22px 20px; }
+  .rsub-num {
+    flex: 0 0 auto;
+    margin-top: 2px;
+    min-width: 42px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--c2) 16%, #fff);
+    color: var(--c1);
+    font-size: 12pt;
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.7;
+  }
+  @keyframes rsec-in {
+    from { opacity: 0; transform: translateY(22px) scale(.98); }
+    to { opacity: 1; transform: none; }
+  }
+  p { text-align: justify; margin: 10px 0; }
+  ul { margin: 8px 0 8px 0; padding-right: 24px; }
+  li { margin: 6px 0; text-align: justify; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 12pt; }
+  th, td { border: 1px solid #333; padding: 6px 8px; vertical-align: top; text-align: right; }
+  th { background-color: #d9e2f3; font-weight: 700; text-align: center; vertical-align: middle; }
+  .note { font-size: 12pt; color: #444; }
+  .mx-out {
+    margin: 10px 0 22px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    border-right: 6px solid;
+    line-height: 1.95;
+    text-align: justify;
+    font-size: 12.5pt;
+  }
+  .mx-out strong { display: block; margin-bottom: 4px; font-size: 13pt; }
+  .mx-out.a { background: #e8f1ff; border-color: #1d4ed8; color: #1e3a8a; }
+  .mx-out.b { background: #ecfdf3; border-color: #15803d; color: #14532d; }
+  .mx-out.c { background: #fff4e5; border-color: #c2410c; color: #7c2d12; }
+  .mx-out.d { background: #f5f3ff; border-color: #6d28d9; color: #4c1d95; }
+  .mx-out.e { background: #fdf2f8; border-color: #be185d; color: #831843; }
+  .mx-out.f { background: #e0f2fe; border-color: #0369a1; color: #0c4a6e; }
+  .mx-block {
+    margin: 22px 0;
+    padding: 14px 16px 6px;
+    background: #fff;
+    border: 1px solid #e6e9f0;
+    border-top: 4px solid #94a3b8;
+    border-radius: 16px;
+  }
+  .mx-block:nth-of-type(1) { border-top-color: #1d4ed8; }
+  .mx-block:nth-of-type(2) { border-top-color: #15803d; }
+  .mx-block:nth-of-type(3) { border-top-color: #c2410c; }
+  .mx-block:nth-of-type(4) { border-top-color: #6d28d9; }
+  .mx-block:nth-of-type(5) { border-top-color: #be185d; }
+  .mx-block h3 { margin-top: 4px; padding-bottom: 8px; border-bottom: 1px dashed #d7dce6; }
+  .limit { background-color: #fff4e5; border-right: 4px solid #b36b00; padding: 8px 12px; margin: 8px 0; }
+
+  /* رنگ‌بندی سلول‌های ماتریس */
+  td.cell-full { background-color: #d4edda !important; color: #155724; }
+  td.cell-partial { background-color: #fff3cd !important; color: #856404; }
+  td.cell-none { background-color: #f8d7da !important; color: #721c24; }
+  td.cell-na { background-color: #e2e3e5 !important; color: #383d41; }
+  td.gap-critical { background-color: #f8d7da !important; color: #721c24; font-weight: 700; }
+  td.gap-high { background-color: #fff3cd !important; color: #856404; }
+  td.gap-ok { background-color: #d4edda !important; color: #155724; }
+  td.pct-high { background-color: #d4edda !important; color: #155724; font-weight: 700; }
+  td.pct-mid { background-color: #fff3cd !important; color: #856404; font-weight: 700; }
+  td.pct-low { background-color: #f8d7da !important; color: #721c24; font-weight: 700; }
+
+  /* ================= نوار ابزار ذخیره ================= */
+  .toolbar {
+    position: sticky;
+    top: 0;
+    background: #1f3864;
+    padding: 10px 16px;
+    margin: -2cm -2cm 0 -2cm;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 1000;
+  }
+  .toolbar button {
+    font-family: inherit;
+    font-size: 12pt;
+    font-weight: 400;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #fff;
+    transition: background 0.2s, filter 0.2s;
+  }
+  .toolbar .btn-vault { background: #9a4d78; }
+  .toolbar .btn-vault:hover { background: #843f66; }
+  .btn-open-all { background: #1aa37a; color: #fff; }
+  .btn-open-all:hover { background: #148966; }
+  .btn-close-all { background: #6b7c93; color: #fff; }
+  .btn-close-all:hover { background: #58687d; }
+  .btn-save-doc { background: #3b82f6; color: #fff; }
+  .btn-save-doc:hover { background: #2f6fe0; }
+  .btn-print { background: #f08a32; color: #fff; }
+  .btn-print:hover { background: #de7824; }
+  .toolbar .title { color: #fff; font-weight: 400; margin-inline-end: auto; font-size: 13pt; text-align: right; }
+  .report-sign {
+    margin: 8px 4px 10px;
+    text-align: center;
+    color: #1f3864;
+    font-weight: 800;
+    font-size: 15pt;
+    line-height: 1.9;
+  }
+  .report-sign .when { color: #8a6a1f; font-size: 13.5pt; font-weight: 700; }
+  .report-sign .upd { display: block; margin-top: 2px; font-size: 11pt; font-weight: 400; color: #6b7280; }
+
+  /* ================= صفحهٔ جلد ================= */
+  .cover-page {
+    position: relative;
+    min-height: 100vh;
+    margin: 0 -2cm 0 -2cm;
+    padding: 3cm 2cm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    page-break-after: always;
+    box-sizing: border-box;
+  }
+  .cover-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 20% 20%, rgba(102,126,234,0.35) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(245,87,108,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(79,172,254,0.2) 0%, transparent 60%);
+    z-index: 1;
+  }
+  .cover-shapes { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+  .cover-shapes .shape { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.5; }
+  .shape-1 { width: 300px; height: 300px; background: #667eea; top: -80px; right: -80px; animation: float 8s ease-in-out infinite; }
+  .shape-2 { width: 250px; height: 250px; background: #f5576c; bottom: -60px; left: -60px; animation: float 10s ease-in-out infinite reverse; }
+  .shape-3 { width: 200px; height: 200px; background: #4facfe; top: 40%; left: 10%; animation: float 12s ease-in-out infinite; }
+  .shape-4 { width: 180px; height: 180px; background: #fee140; bottom: 20%; right: 15%; animation: float 9s ease-in-out infinite reverse; }
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(20px, -20px) scale(1.1); }
+  }
+  .cover-content {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    animation: fadeInUp 1s ease-out;
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .cover-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50px;
+    font-size: 12pt;
+    font-weight: 700;
+    backdrop-filter: blur(10px);
+    margin-bottom: 30px;
+    letter-spacing: 1px;
+  }
+  .cover-title {
+    font-size: 32pt !important;
+    font-weight: 800;
+    line-height: 1.5;
+    margin: 20px 0 !important;
+    text-align: center !important;
+    text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    border: none !important;
+  }
+  .cover-title-accent {
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 28pt;
+  }
+  .cover-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 24px 0;
+    color: #4facfe;
+  }
+  .cover-divider span { width: 80px; height: 2px; background: linear-gradient(90deg, transparent, #4facfe, transparent); }
+  .cover-subtitle {
+    font-size: 13pt;
+    line-height: 2;
+    color: rgba(255,255,255,0.85);
+    max-width: 720px;
+    margin: 0 auto 20px;
+    text-align: center !important;
+  }
+  .cover-author {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 24px;
+    background: rgba(79, 172, 254, 0.12);
+    border: 1px solid rgba(79, 172, 254, 0.35);
+    border-radius: 50px;
+    color: rgba(255,255,255,0.92);
+    font-size: 13pt;
+    margin: 0 auto 30px;
+    backdrop-filter: blur(10px);
+  }
+  .cover-author strong { color: #4facfe; font-weight: 800; }
+  .cover-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin: 40px 0;
+  }
+  .cover-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 16px;
+    padding: 20px 12px;
+    backdrop-filter: blur(12px);
+    transition: transform 0.3s, background 0.3s;
+  }
+  .cover-card:hover { transform: translateY(-6px); background: rgba(255,255,255,0.15); }
+  .cover-card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+  .cover-card-title { font-size: 12pt; font-weight: 700; color: #fff; margin-bottom: 4px; }
+  .cover-card-desc { font-size: 10pt; color: rgba(255,255,255,0.65); }
+  .cover-footer {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    flex-wrap: wrap;
+  }
+  .cover-footer-item { display: flex; align-items: center; gap: 6px; font-size: 11pt; color: rgba(255,255,255,0.7); }
+
+  @media print {
+    .toolbar { display: none !important; }
+    .cover-page { min-height: 297mm; margin: 0; page-break-after: always; }
+    .cover-title { font-size: 28pt !important; }
+    .rsec, .rsec:hover { transform: none !important; box-shadow: none; animation: none; break-inside: auto; }
+    .rsec-panel { grid-template-rows: 1fr !important; }
+    .rsec-body { opacity: 1 !important; transform: none !important; padding: 12px 22px 20px !important; overflow: visible; }
+    .rsec-chev, .rsec-head { cursor: default; }
+    .rsec-head { break-after: avoid; }
+  }
+  @media (max-width: 768px) {
+    .cover-cards { grid-template-columns: repeat(2, 1fr); }
+    .cover-title { font-size: 22pt !important; }
+    .cover-title-accent { font-size: 20pt; }
+  }
+</style>
+<style>
+  #gate {
+    position: fixed; inset: 0; z-index: 100000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    background: #fff;
+    font-family: "Vazir", "Vazirmatn", Tahoma, sans-serif;
+    box-sizing: border-box;
+  }
+  #gate .shell {
+    width: min(980px, 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    align-items: stretch;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 22px 60px rgba(0,0,0,.38);
+  }
+  #gate .card, #gate .info {
+    border-radius: 0;
+    box-shadow: none;
+    box-sizing: border-box;
+  }
+  #gate .card {
+    background: #fff;
+    padding: 34px 28px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  #gate .badge {
+    align-self: flex-start;
+    background: #eef3fb;
+    color: #1f3864;
+    font-size: 11pt;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+  #gate h1 {
+    font-size: 20pt; margin: 0 0 6px; color: #1f3864;
+    border: none; text-align: right; font-weight: 800;
+  }
+  #gate .lead {
+    text-align: right; color: #667;
+    margin: 0 0 22px; font-size: 12pt; line-height: 1.9;
+  }
+  #gate label {
+    display: block; text-align: right; font-size: 11.5pt;
+    font-weight: 700; color: #1f3864; margin: 0 0 6px;
+  }
+  #gate input {
+    width: 100%; box-sizing: border-box;
+    font-family: inherit; font-size: 14pt;
+    text-align: right; padding: 11px 14px; margin-bottom: 14px;
+    border: 1.5px solid #d5deee; border-radius: 12px; outline: none;
+    background: #f8fafc; color: #222;
+  }
+  #gate input:focus { border-color: #1f3864; background: #fff; }
+  #gate input:disabled {
+    background: #eef1f6; color: #6b7280; cursor: not-allowed; letter-spacing: 0;
+  }
+  #gate input[type="password"] { letter-spacing: 3px; }
+  #gate button.enter {
+    margin-top: 4px; width: 100%;
+    font-family: inherit; font-size: 13.5pt; font-weight: 700;
+    background: linear-gradient(180deg, #2a4a86, #1f3864);
+    color: #fff; border: none; border-radius: 12px;
+    padding: 12px 16px; cursor: pointer;
+    box-shadow: 0 8px 18px rgba(31,56,100,.28);
+  }
+  #gate button.enter:hover { filter: brightness(1.08); }
+  #gate .err { color: #b00020; min-height: 1.5em; margin-top: 10px; font-size: 11pt; text-align: right; }
+  #gate .info {
+    position: relative;
+    overflow: hidden;
+    color: #f4f7ff;
+    padding: 36px 32px;
+    background:
+      linear-gradient(160deg, rgba(255,255,255,.08), transparent 40%),
+      linear-gradient(145deg, #243e78 0%, #162848 100%);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  #gate .info::before {
+    content: "";
+    position: absolute; inset-inline-start: -40px; top: -40px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(212,175,95,.18);
+  }
+  #gate .info h2 {
+    position: relative;
+    margin: 0; border: none; padding: 0;
+    color: #fff; font-size: 22pt; line-height: 1.8; font-weight: 400;
+  }
+  #gate .info p {
+    position: relative;
+    margin: 0; text-align: justify; color: #e6ecf8;
+    font-size: 13.5pt; line-height: 2.05;
+  }
+  #gate .byline {
+    position: relative;
+    margin-top: 84px;
+    color: #e8c97a;
+    font-weight: 800;
+    font-size: 17pt;
+    line-height: 1.7;
+  }
+  @media (max-width: 820px) {
+    #gate .shell { grid-template-columns: 1fr; }
+  }
+</style>
+<style id="vault-css">
+  body:not(.in-report) .toolbar,
+  body:not(.in-report) #report-content,
+  body:not(.in-report) .report-sign { display: none !important; }
+  body.in-report #vault, body.in-report #draft { display: none !important; }
+  body.in-draft #vault, body.in-draft .toolbar, body.in-draft #report-content, body.in-draft .report-sign { display: none !important; }
+  body:not(.in-report):not(.in-draft) { margin: 0; background: #071428; }
+  #vault { min-height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 28px 16px;
+    background: #071428; font-family: "Vazir","Vazirmatn",Tahoma,sans-serif; }
+  #vault, #vault button { font-family: "Vazir","Vazirmatn",Tahoma,sans-serif; }
+  .vault-wrap { width: min(1188px, 100%); background: #f7f6f8; border-radius: 22px; padding: 28px 32px 56px; box-shadow: 0 24px 60px rgba(0,0,0,.35); box-sizing: border-box; }
+  .vault-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 18px; }
+  .vault-titles { text-align: right; }
+  #vault h1 { margin: 0; color: #1c2430; font-size: 28px; font-weight: 400; line-height: 1.5; }
+  .vault-by { margin: 4px 0 0; color: #8b93a0; font-size: 16px; font-weight: 400; }
+  .btn-out { border: 0; background: #8d2346; color: #fff; border-radius: 8px; padding: 8px 16px; font-family: inherit; font-weight: 400; font-size: 15px; cursor: pointer; }
+  .btn-out:hover { background: #721b38; }
+  .vault-grid { direction: rtl; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .mod-card { appearance: none; border: 0; padding: 0; background: transparent; cursor: pointer; width: 100%; height: auto; aspect-ratio: 1 / 1; border-radius: 18px; perspective: 1000px; }
+  .mod-card:focus-visible { outline: 3px solid #8d2346; outline-offset: 3px; }
+  .card-inner { position: relative; display: block; width: 100%; height: 100%; border-radius: 16px; transform-style: preserve-3d; transition: transform .55s ease; }
+  .mod-card.flipped .card-inner { transform: rotateY(180deg); }
+  .face { position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+  .front { box-sizing: border-box; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 14px 10px; text-align: center; color: #fff; background: var(--accent); transition: filter .18s ease; }
+  .mod-card:hover:not(.flipped) .front { filter: brightness(1.06); }
+  .back { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 18px; box-sizing: border-box; text-align: center; color: #fff; background: var(--accent); transform: rotateY(180deg); }
+  .pct { font-size: 48px; font-weight: 400; line-height: 1; letter-spacing: .5px; }
+  .back .done-bar { width: 72%; margin-top: 0; }
+  .back .go-line { margin-top: 0; }
+  .ico { width: 72px; height: 72px; border-radius: 22px; background: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; }
+  .ico svg { width: 52px; height: 52px; display: block; }
+  .mark { font-weight: 800; color: #5c3b54; font-size: 24px; }
+  .meta { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .mod-fa { font-size: 22px; font-weight: 400; line-height: 1.5; letter-spacing: .2px; }
+  .mod-name { display: none; }
+  .go-line { margin-top: 10px; font-size: 15px; font-weight: 400; opacity: .95; }
+  .mod-card[data-ready="false"] .go-line::before { content: "\270E  "; }
+  .mod-card.nudge .go-line { animation: nudge .45s ease; }
+  @keyframes nudge { 50% { transform: scale(1.08); } }
+  .done-bar { width: 78%; height: 8px; margin-top: 12px; border-radius: 99px; background: rgba(255,255,255,.35); overflow: hidden; }
+  .done-bar > span { display: block; width: 100%; height: 100%; background: #fff; }
+  .done-bar.p0 > span { width: 0; }
+  .done-bar.p20 > span { width: 20%; }
+  .done-bar.p40 > span { width: 40%; }
+  .done-bar.p50 > span { width: 50%; }
+  .mod-card[data-mod="appraisals"] { --accent: #f08a32; }
+  .mod-card[data-mod="attendance"] { --accent: #12966c; }
+  .mod-card[data-mod="planning"] { --accent: #2f62d0; }
+  .mod-card[data-mod="sign"] { --accent: #e23b58; }
+  .mod-card[data-mod="requirement"] { --accent: #7b45e0; }
+  .mod-card[data-mod="referrals"] { --accent: #1490c4; }
+  .vault-foot { margin-top: 16px; width: min(1188px, 100%); background: transparent; text-align: center; padding: 6px 10px; color: #d5dbe4; font-size: 16px; font-weight: 400; }
+  .vault-foot .upd { display: block; margin-top: 2px; font-size: 12px; color: #aeb6c2; font-weight: 400; }
+  #draft { display: none; min-height: 100vh; align-items: center; justify-content: center; background: #071428; font-family: "Vazir","Vazirmatn",Tahoma,sans-serif; padding: 24px; }
+  body.in-draft #draft { display: flex !important; }
+  .draft-card { width: min(480px,100%); background: #fff; border-radius: 24px; text-align: center; padding: 42px 28px; box-shadow: 0 18px 50px rgba(61,34,64,.12); }
+  #draft-name { margin: 0 0 8px; color: #714B67; font-weight: 800; }
+  .draft-card h2 { margin: 0 0 22px; font-size: 28px; color: #1f2937; }
+  .draft-card button, .btn-vault { border: 0; border-radius: 10px; padding: 10px 16px; cursor: pointer; font-family: inherit; font-weight: 700; background: #714B67; color: #fff; }
+  .btn-vault:hover, .draft-card button:hover { background: #5c3b54; }
+  @media (max-width: 860px) { .vault-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .vault-grid { grid-template-columns: 1fr; } }
+  @media print { #vault, #draft, .btn-vault { display: none !important; } }
+</style>
+
+</head>
+<body>
+
+<div id="gate" dir="ltr">
+  <div class="shell">
+    <form class="card" id="gate-form" dir="rtl" autocomplete="off">
+      <span class="badge">خوش آمدید</span>
+      <h1>ورود به گزارش</h1>
+      <p class="lead">برای مشاهدهٔ گزارش، رمز عبور را وارد کنید.</p>
+      <label for="gate-user">نام کاربری</label>
+      <input id="gate-user" type="text" value="مهمان" disabled>
+      <label for="gate-pass">رمز عبور</label>
+      <input id="gate-pass" type="password" inputmode="numeric" placeholder="رمز عبور" autofocus>
+      <button class="enter" type="submit">ورود</button>
+      <div class="err" id="gate-err"></div>
+    </form>
+    <aside class="info" dir="rtl">
+      <h2>تحلیل تطبیقی Fit &amp; Gap ماژول Appraisals در Odoo نسخه ۱۸</h2>
+      <div class="byline">تحلیل، طراحی و توسعه: علیرضا مختاری</div>
+    </aside>
+  </div>
+</div>
+<script>
+(function () {
+  var KEY = "fitgap-auth";
+  var gate = document.getElementById("gate");
+  function openReport() {
+    try { sessionStorage.setItem(KEY, "1"); } catch (e) {}
+    gate.style.display = "none";
+    showVault();
+  }
+  window.leaveVault = function () {
+    try { sessionStorage.removeItem(KEY); } catch (e) {}
+    document.body.classList.remove("in-report", "in-draft");
+    gate.style.display = "";
+    var pass = document.getElementById("gate-pass");
+    if (pass) { pass.value = ""; pass.focus(); }
+  };
+  window.showVault = function () {
+    document.body.classList.remove("in-report", "in-draft");
+    document.querySelectorAll(".mod-card").forEach(function (c) { c.classList.remove("go", "busy", "flipped"); });
+    window.scrollTo(0, 0);
+  };
+  window.showReport = function () {
+    document.body.classList.remove("in-draft");
+    document.body.classList.add("in-report");
+    window.scrollTo(0, 0);
+  };
+  window.showDraft = function (name) {
+    document.getElementById("draft-name").textContent = name || "";
+    document.body.classList.remove("in-report");
+    document.body.classList.add("in-draft");
+    window.scrollTo(0, 0);
+  };
+  document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".mod-card").forEach(function (card) {
+      card.addEventListener("click", function () {
+        if (card.getAttribute("data-ready") !== "true") {
+          card.classList.toggle("flipped");
+          return;
+        }
+        if (card.classList.contains("busy")) return;
+        card.classList.add("busy", "go");
+        window.setTimeout(function () { showReport(); }, 160);
+      });
+    });
+  });
+  try { if (sessionStorage.getItem(KEY) === "1") openReport(); } catch (e) {}
+  document.getElementById("gate-form").addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var v = (document.getElementById("gate-pass").value || "").trim();
+    if (v === "1393") {
+      document.getElementById("gate-err").textContent = "";
+      openReport();
+    } else {
+      document.getElementById("gate-err").textContent = "رمز عبور نادرست است.";
+      document.getElementById("gate-pass").value = "";
+      document.getElementById("gate-pass").focus();
+    }
+  });
+})();
+</script>
+
+<div id="vault">
+  <div class="vault-wrap">
+    <div class="vault-head">
+      <div class="vault-titles">
+        <h1>گنجینه گزارشات تحلیلی و تطبیقی Odoo</h1>
+        <p class="vault-by">مرکز دسترسی به گزارش ماژول‌ها</p>
+      </div>
+      <button type="button" class="btn-out" onclick="leaveVault()">خروج</button>
+    </div>
+    <div class="vault-grid">
+<button type="button" class="mod-card" data-mod="appraisals" data-title="Appraisals" data-ready="true">
+  <span class="card-inner">
+    <span class="face front"><span class="ico"><svg width="92" height="92" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><path d="M45.73 21.466c.29-.498.338-1.067.184-1.575L25 25.87l12.836 19.765c.462-.327.787-.85.833-1.472v-.006l.86-12.055.217-.371.015-.027 5.968-10.24Z" fill="#FBB945"/><path d="m24.418 42.67.015-.005.567-.174 11.126 3.426a1.97 1.97 0 0 0 1.71-.28L25 25.87 12.164 45.636a1.97 1.97 0 0 0 1.726.276l10.527-3.242Z" fill="#985184"/><path d="M4.086 19.89a1.977 1.977 0 0 0 .175 1.56l6.21 10.653.03.436.003.024.827 11.595c.045.625.37 1.15.833 1.478L25 25.871l-20.914-5.98Z" fill="#712258"/><path d="M25 4v21.87L4.087 19.89c.152-.5.5-.941 1.006-1.196l10.568-5.288 7.874-8.756c.393-.433.93-.65 1.467-.65Z" fill="#FBB945"/><path d="M25 4v21.87l20.914-5.98a1.975 1.975 0 0 0-1.01-1.197l-10.228-5.119-.015-.008-.32-.16-.242-.268-.01-.011-7.616-8.47A1.973 1.973 0 0 0 25 4Z" fill="#F78613"/></svg>
+</span><span class="meta"><span class="mod-fa">Appraisals</span><span class="done-bar"><span></span></span><span class="go-line">تکمیل شده</span></span></span>
+    <span class="face back"><span>ورود به گزارش</span></span>
+  </span>
+</button>
+<button type="button" class="mod-card" data-mod="attendance" data-title="Attendance" data-ready="false" data-pct="40">
+  <span class="card-inner">
+    <span class="face front"><span class="ico"><svg width="92" height="92" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="16" r="10" fill="#FBB945"/><path d="M10.215 9.722c.45-.557.96-1.066 1.518-1.515l7.479 5.999c.985.79 1.053 2.274.16 3.168-.892.893-2.375.825-3.164-.161l-5.993-7.49Z" fill="#fff"/><circle cx="38" cy="24" r="5" fill="#953B24"/><path d="M16 31h26a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4H16V31Z" fill="#953B24"/><path d="M4 31h16c7.18 0 13 5.82 13 13H17C9.82 44 4 38.18 4 31Z" fill="#FBB945"/></svg>
+</span><span class="meta"><span class="mod-fa">Attendance</span><span class="done-bar p40"><span></span></span><span class="go-line">در دست تدوین</span></span></span>
+    <span class="face back"><span class="pct">۴۰٪</span><span class="done-bar p40"><span></span></span><span class="go-line">میزان پیشرفت</span></span>
+  </span>
+</button>
+<button type="button" class="mod-card" data-mod="planning" data-title="Planning" data-ready="false">
+  <span class="card-inner">
+    <span class="face front"><span class="ico"><svg width="92" height="92" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M5 17h40v16H5z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M4 8.074a4 4 0 0 0-4 4v26a4 4 0 0 0 4 4h21v-34H4Zm2.825 18.732c-1.333-.77-1.333-2.694 0-3.464l9.046-5.222c1.333-.77 3 .192 3 1.732v10.445c0 1.54-1.667 2.501-3 1.732l-9.046-5.223Z" fill="#FBB945"/><path fill-rule="evenodd" clip-rule="evenodd" d="M46 8.074H25v34h21a4 4 0 0 0 4-4v-26a4 4 0 0 0-4-4Zm-2.826 18.732c1.334-.77 1.334-2.694 0-3.464L34.13 18.12c-1.333-.77-3 .192-3 1.732v10.445c0 1.54 1.667 2.501 3 1.732l9.045-5.223Z" fill="#1AD3BB"/><path d="M23 6.095C23 4.938 23.895 4 25 4s2 .938 2 2.095v37.81C27 45.062 26.105 46 25 46s-2-.938-2-2.095V6.095Z" fill="#985184"/></svg>
+</span><span class="meta"><span class="mod-fa">Planning</span><span class="done-bar p50"><span></span></span><span class="go-line">در دست تدوین</span></span></span>
+    <span class="face back"><span class="pct">۵۰٪</span><span class="done-bar p50"><span></span></span><span class="go-line">میزان پیشرفت</span></span>
+  </span>
+</button>
+<button type="button" class="mod-card" data-mod="sign" data-title="Sign" data-ready="false">
+  <span class="card-inner">
+    <span class="face front"><span class="ico"><svg width="92" height="92" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><path d="M4 37c0-2.21 1.76-4 3.932-4H45.29c0 2.21-1.76 4-3.932 4H4Z" fill="#2EBCFA"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.248 11.883c-1.86 2.715-3.519 6.134-4.468 8.451l-3.63-1.538c1.017-2.483 2.8-6.177 4.872-9.2 1.03-1.504 2.198-2.939 3.448-3.969 1.206-.993 2.828-1.883 4.647-1.56 3.606.64 5.297 3.819 6.093 6.525.82 2.793.942 5.864.942 7.664v.017c0 .986 0 2.416-.068 4.083 1.236-.069 2.307.085 3.235.406a5.99 5.99 0 0 1 .702-1.117c1.01-1.26 2.518-2.026 4.451-2.062 1.726-.032 2.888 1.002 3.646 1.677.066.06.13.116.19.168.822.718 1.82 1.558 3.628 2.314.052-.006.13-.017.24-.039.35-.07.812-.21 1.355-.406.722-.261 1.382-.54 1.995-.799.366-.154.715-.302 1.051-.434L46 25.794c-.182.071-.45.183-.766.316a53.07 53.07 0 0 1-2.386.956c-.614.222-1.283.436-1.91.562-.516.103-1.428.245-2.271-.095-2.504-1.008-3.924-2.2-4.92-3.07-1.024-.893-1.106-.887-1.185-.881h-.017c-.868.017-1.252.313-1.475.59-.191.24-.347.58-.446 1.003.218.281.414.573.58.868.299.53.582 1.21.632 1.962.055.812-.17 1.782-.983 2.503a2.16 2.16 0 0 1-1.836.522 2.32 2.32 0 0 1-1.28-.729c-.422-.46-.655-1.04-.788-1.456a8.37 8.37 0 0 1-.36-2.052c-.461-.269-1.31-.58-2.8-.4l-.017.163c-.378 3.354-1.152 7.172-2.828 10.148-1.524 2.706-3.092 4.93-4.596 6.507-.751.789-1.527 1.459-2.315 1.943-.773.475-1.681.847-2.66.847-1.361 0-3.155-.465-4.2-2.217-.991-1.662-.933-3.89-.134-6.489C8.633 32.103 12.39 26.45 18.47 23.832a23.411 23.411 0 0 1 1.635-.635c.113-1.995.114-3.75.114-4.941 0-1.691-.124-4.293-.778-6.518-.68-2.312-1.691-3.498-3.001-3.73-.147-.026-.614 0-1.497.728-.839.691-1.76 1.782-2.696 3.147Zm7.41 15.787c-4.54 2.105-7.546 6.519-8.867 10.819-.676 2.2-.372 3.027-.257 3.22.061.103.233.292.838.292 0 0 .049-.001.156-.038.112-.038.269-.109.471-.233.41-.252.925-.673 1.525-1.303 1.2-1.26 2.582-3.18 4.007-5.711 1.063-1.888 1.727-4.407 2.127-7.046Z" fill="#005E7A"/></svg>
+</span><span class="meta"><span class="mod-fa">Sign</span><span class="done-bar p20"><span></span></span><span class="go-line">در دست تدوین</span></span></span>
+    <span class="face back"><span class="pct">۲۰٪</span><span class="done-bar p20"><span></span></span><span class="go-line">میزان پیشرفت</span></span>
+  </span>
+</button>
+<button type="button" class="mod-card" data-mod="requirement" data-title="Requirement" data-ready="false">
+  <span class="card-inner">
+    <span class="face front"><span class="ico"><span class="mark">Rq</span></span><span class="meta"><span class="mod-fa">Requirement</span><span class="done-bar p0"><span></span></span><span class="go-line">در دست تدوین</span></span></span>
+    <span class="face back"><span class="pct">۰٪</span><span class="done-bar p0"><span></span></span><span class="go-line">میزان پیشرفت</span></span>
+  </span>
+</button>
+<button type="button" class="mod-card" data-mod="referrals" data-title="Referrals" data-ready="false">
+  <span class="card-inner">
+    <span class="face front"><span class="ico"><svg width="92" height="92" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg"><path d="M42.678 7.322A25 25 0 0 1 7.322 42.678L42.678 7.322Z" fill="#985184"/><path d="M7.322 42.678A25 25 0 0 1 42.678 7.322L7.322 42.678Z" fill="#FC868B"/><path d="M46 25c0 11.598-9.402 21-21 21S4 36.598 4 25 13.402 4 25 4s21 9.402 21 21Z" fill="#fff"/><path d="M12.98 37.02a17 17 0 1 1 24.04-24.04L12.98 37.02Z" fill="#FC868B"/><path d="M37.022 12.98a16.999 16.999 0 0 1-18.526 27.727 16.999 16.999 0 0 1-5.515-3.685l24.041-24.041Z" fill="#985184"/><path d="M23.477 14.927a1.714 1.714 0 0 1 3.046 0l1.968 3.639c.249.46.679.786 1.177.89l3.928.827c1.335.28 1.863 1.973.941 3.018l-2.712 3.075c-.344.39-.508.916-.45 1.441l.46 4.15c.157 1.41-1.225 2.455-2.463 1.865l-3.645-1.738a1.684 1.684 0 0 0-1.454 0l-3.645 1.738c-1.238.59-2.62-.456-2.463-1.866l.46-4.149a1.871 1.871 0 0 0-.45-1.441L15.463 23.3c-.922-1.045-.394-2.738.94-3.018l3.93-.826c.497-.105.927-.43 1.176-.891l1.968-3.639Z" fill="#fff"/></svg>
+</span><span class="meta"><span class="mod-fa">Referrals</span><span class="done-bar p0"><span></span></span><span class="go-line">در دست تدوین</span></span></span>
+    <span class="face back"><span class="pct">۰٪</span><span class="done-bar p0"><span></span></span><span class="go-line">میزان پیشرفت</span></span>
+  </span>
+</button>
+    </div>
+  </div>
+  <div class="vault-foot">تحلیل، طراحی و توسعه: علیرضا مختاری<span class="upd">(آخرین بروزرسانی: ۱۴۰۵/۰۹/۰۴)</span></div>
+</div>
+<div id="draft">
+  <div class="draft-card">
+    <p id="draft-name"></p>
+    <h2>در دست تدوین</h2>
+    <button type="button" onclick="showVault()">بازگشت به گنجینه</button>
+  </div>
+</div>
+
+<!-- ================= نوار ابزار ذخیره ================= -->
+<div class="toolbar">
+  <span class="title">تحلیل تطبیقی Fit &amp; Gap ماژول Appraisals در Odoo نسخه ۱۸</span>
+  <button class="btn-open-all" type="button" onclick="setAllSections(true)">باز شدن همهٔ گزارش</button>
+  <button class="btn-close-all" type="button" onclick="setAllSections(false)">بسته شدن همهٔ گزارش</button>
+  <button class="btn-save-doc" onclick="saveAsDoc()">📝 ذخیره گزارش</button>
+  <button class="btn-print" onclick="window.print()">🖨️ چاپ گزارش</button>
+  <button class="btn-vault" type="button" onclick="showVault()">بازگشت</button>
+</div>
+
+<!-- ================= محتوای گزارش ================= -->
+<div id="report-content">
+
+<h2>۱. مقدمه و دامنه گزارش</h2>
+<p>این گزارش با هدف تحلیل جامع و مقایسه‌ای (Fit &amp; Gap) چهار جزء اصلی تهیه شده است. مدیریت عملکرد کارکنان به‌عنوان یکی از حیاتی‌ترین فرایندهای منابع انسانی، نقش مستقیمی در هم‌راستاسازی اهداف فردی با استراتژی سازمان، توسعهٔ شایستگی‌ها، تصمیم‌گیری‌های مبتنی بر داده در حوزهٔ ارتقا و پاداش، و در نهایت ارتقای بهره‌وری سازمانی ایفا می‌کند. از این‌رو، بررسی دقیق استانداردهای بین‌المللی، قابلیت‌های نرم‌افزاری موجود و نیازمندی‌های بومی سازمان ضروری است تا شکاف‌ها و نقاط قوت هر رویکرد به‌روشنی مشخص شود.</p>
+<p>چهار جزء مورد بررسی عبارت‌اند از:</p>
+<ul>
+  <li>مدل استاندارد بین‌المللی مدیریت عملکرد کارکنان بر پایهٔ استانداردها و ایزوهای معتبر.</li>
+  <li>امکانات و قابلیت‌های ماژول Appraisals در Odoo نسخهٔ ۱۸.</li>
+  <li>امکانات و قابلیت‌های ماژول توسعه‌یافتهٔ مدیریت عملکرد کارکنان، سازگار با Odoo نسخهٔ ۱۹.</li>
+  <li>مدل ارزیابی عملکرد استخراج‌شده از مدل گروه صنایع گیتی‌پسند (صرفاً ارزیابی از بالا به پایین، مدل ۹۰ درجه).</li>
+</ul>
+<p>چهار جزء فوق به‌صورت زیر در گزارش بررسی شده‌اند:</p>
+<p><strong>نخست،</strong> مدل استاندارد مدیریت عملکرد کارکنان بر پایهٔ استانداردهای معتبر بین‌المللی—از جمله ISO 30414:2018 (گزارش‌دهی سرمایهٔ انسانی)، ISO 10015:2019 (مدیریت شایستگی و توسعهٔ افراد) و الزامات مرتبط با ISO 9001:2015—به‌همراه بهترین رویه‌های جهانی مانند OKR، ارزیابی ۳۶۰ درجه، Calibration و برنامهٔ توسعهٔ فردی (IDP) تبیین شده است. این بخش به‌عنوان مرجع معیار (Baseline) برای سنجش سایر اجزا عمل می‌کند.</p>
+<p><strong>دوم،</strong> قابلیت‌ها و محدودیت‌های ماژول Appraisals بومی Odoo نسخهٔ ۱۸ بر اساس مستندات رسمی و بررسی ویژگی‌های موجود استخراج شده است تا جایگاه این ماژول نسبت به مدل استاندارد مشخص شود.</p>
+<p><strong>سوم،</strong> ماژول توسعه‌یافتهٔ مدیریت عملکرد کارکنان به‌صورت کامل و بند‌به‌بند بر پایهٔ سورس‌کد (شامل مدل‌ها، ویوها، داده‌های اولیه، امنیت و ویزاردها) تحلیل شده و تمامی امکانات و قابلیت‌های آن تشریح شده است.</p>
+<p><strong>چهارم،</strong> مدل ارزیابی عملکرد گروه صنایع گیتی‌پسند (ارزیابی ۹۰ درجه از بالا به پایین) استخراج و توصیف شده است تا نیازمندی‌های واقعی سازمان به‌عنوان مرجع بومی در تحلیل Fit &amp; Gap لحاظ شود.</p>
+<p>رویکرد گزارش، تطبیق متقابل (Cross-Comparison) این چهار جزء است؛ به‌گونه‌ای که نقاط قوت، شکاف‌ها و میزان پوشش هر سیستم—هم نسبت به استاندارد و هم نسبت به نیاز سازمان—به‌صورت شفاف و قابل اندازه‌گیری (همراه با درصد مطابقت) ارائه شود.</p>
+<p>در پایان گزارش، ماتریس تطبیق و شکاف (Fit &amp; Gap) به‌همراه درصدهای مطابقت و نمودار مقایسه‌ای ارائه می‌شود تا مشخص گردد ماژول توسعه‌یافته تا چه میزان با مدل استاندارد بین‌المللی و نیازمندی‌های سازمانی (مدل گیتی‌پسند) همخوانی دارد و ماژول بومی Appraisals در Odoo چه فاصله‌هایی با این دو مرجع دارد. نتایج این تحلیل، در صورت صلاحدید، می‌تواند مبنای تصمیم‌گیری برای انتخاب، پیکربندی یا توسعهٔ تکمیلی سیستم مدیریت عملکرد قرار گیرد.</p>
+
+<h2>۲. مدل استاندارد مدیریت عملکرد کارکنان (بر اساس استانداردها و ایزوها)</h2>
+<p>این استانداردها را می‌توان به دو دستهٔ «الزامات ساختاری» و «ابزارهای عملیاتی» تفکیک کرد. در دستهٔ نخست، ISO 30414:2018 چارچوب گزارش‌دهی سرمایهٔ انسانی را تعریف می‌کند و چند حوزهٔ اصلی از جمله بهره‌وری، شایستگی و مهارت‌ها، برنامه‌ریزی جانشین‌پروری و فرهنگ سازمانی را پوشش می‌دهد؛ هدف آن شفاف‌سازی سهم سرمایهٔ انسانی در پایداری سازمان است. ISO 10015:2019 نیز به‌طور مشخص بر مدیریت شایستگی و توسعهٔ افراد متمرکز است و چرخهٔ تعیین نیازهای شایستگی، ارزیابی شایستگی موجود، شناسایی شکاف و طراحی اقدامات توسعه‌ای را در سه سطح سازمانی، تیمی و فردی هدایت می‌کند. ISO 9001:2015 هرچند استاندارد مدیریت کیفیت است، اما الزامات بندهای ۷.۱.۲ (افراد) و ۷.۲ (شایستگی) آن، سازمان را ملزم می‌کند که افراد لازم برای اجرای اثربخش فرایندها را تعیین کند، شایستگی آن‌ها را تضمین و شواهد آن را مستند کند.</p>
+<p>در دستهٔ دوم، OKR به‌عنوان چارچوب هدف‌گذاری، با ایجاد پیوند شفاف بین اهداف سازمانی، تیمی و فردی، امکان هم‌راستاسازی عمودی و افقی را فراهم می‌آورد و با بازبینی‌های دوره‌ای، انطباق‌پذیری را افزایش می‌دهد. ارزیابی ۳۶۰ درجه با گردآوری بازخورد از منابع چندگانه (مدیر، همکاران، زیردستان و خود فرد)، تصویری جامع‌تر از نقاط قوت و نیازهای توسعه‌ای ارائه می‌دهد و در کنار ارزیابی سنتی، به‌عنوان ورودی برنامهٔ توسعهٔ فردی به کار می‌رود. Calibration (کالیبراسیون ارزیابی) با گردهم‌آوردن مدیران و شرکای منابع انسانی در جلسات ساختاریافته، به کاهش سوگیری در امتیازدهی، یکسان‌سازی درک از استانداردهای عملکرد و توزیع منصفانهٔ ارزیابی‌ها کمک می‌کند. برنامهٔ توسعهٔ فردی (IDP) نیز به‌عنوان خروجی نهایی چرخهٔ مدیریت عملکرد، اهداف کوتاه‌مدت و بلندمدت فرد، اقدامات یادگیری و حمایت‌های سازمانی را به‌صورت مشارکتی بین کارمند و سرپرست تدوین می‌کند.</p>
+<p>این مجموعه، در کنار یکدیگر، «حداقل الزامات» و «بهترین رویه‌های» قابل استناد برای تحلیل تطبیقی در بخش‌های بعدی را شکل می‌دهند: استانداردها چارچوب «چه باید باشد» را تعریف می‌کنند و چارچوب‌های عملیاتی نشان می‌دهند «چگونه می‌توان به آن رسید».</p>
+
+<h3>۲.۱. ISO 30414:2025 — گزارش‌دهی سرمایهٔ انسانی</h3>
+<p>ویرایش دوم این استاندارد در اوت ۲۰۲۵ منتشر شد و نسبت به نسخهٔ ۲۰۱۸ سه تغییر ساختاری مهم دارد: نخست، الزامات قابل حسابرسی به مجموعه اضافه شده و استاندارد از یک سند صرفاً راهنما به چارچوبی «آمادهٔ انطباق» تبدیل شده است؛ دوم، ۱۴ شاخص پایهٔ الزامی تعریف شده که برای همهٔ سازمان‌ها بدون توجه به اندازه، بخش یا موقعیت جغرافیایی قابل اعمال است؛ سوم، دامنهٔ سنجش به حوزه‌هایی مانند حقوق بشر، روابط کار، بهره‌وری، اخلاق و رفاه نیروی کار گسترش یافته است. یازده حوزهٔ اصلی همچنان چارچوب سازمان‌دهنده باقی مانده‌اند و حوزهٔ «مهارت‌ها، قابلیت‌ها و توسعه» به‌طور مستقیم به سیستم‌های ارزیابی عملکرد، برنامه‌های توسعهٔ فردی و ردیابی پیشرفت اهداف متصل است. برای تحلیل Fit &amp; Gap، این استاندارد مرجع «حداقل داده‌هایی» است که سیستم مدیریت عملکرد باید بتواند تولید کند.</p>
+
+<h3>۲.۲. ISO 10015:2019 — مدیریت شایستگی و توسعهٔ افراد</h3>
+<p>این استاندارد راهنمای ایجاد، پیاده‌سازی، نگهداری و بهبود سیستم‌های مدیریت شایستگی و توسعهٔ افراد است و برای همهٔ سازمان‌ها بدون توجه به نوع و اندازه قابل استفاده است. ارتباط آن با مدیریت عملکرد در یک نکتهٔ کلیدی خلاصه می‌شود: ارزیابی عملکرد باید نقاط قوت و شکاف شایستگی را شناسایی کند و خروجی آن مستقیماً به برنامهٔ توسعهٔ فردی (IDP) و اقدامات آموزشی منتهی شود. بدون این پیوند، ارزیابی عملکرد به یک رویداد اداری بدون پیامد توسعه‌ای تبدیل می‌شود.</p>
+
+<h3>۲.۳. ISO 9001:2015 — بندهای مرتبط با پایش و ارزیابی</h3>
+<p>ISO 9001:2015 اگرچه استاندارد مدیریت کیفیت است، اما الزامات آن در زمینهٔ پایش، اندازه‌گیری، تحلیل و ارزیابی (بند ۹.۱)، ممیزی داخلی (۹.۲) و بازنگری مدیریت (۹.۳) چارچوبی برای تولید دادهٔ قابل اتکا فراهم می‌کند. سیستم مدیریت عملکرد کارکنان باید بتواند داده‌هایی تولید کند که در بازنگری مدیریتی قابل استفاده باشد—نه صرفاً امتیازهایی که در یک فایل اکسل باقی می‌مانند.</p>
+
+<h3>۲.۴. چارچوب‌های مکمل: از هدف‌گذاری تا توسعه</h3>
+<p><strong>OKR</strong> برخلاف SMART که بیشتر بر کیفیت هدف فردی متمرکز است، سازوکاری برای هم‌راستاسازی عمودی (سازمان←تیم←فرد) و افقی (بین تیم‌ها) فراهم می‌کند. مطالعات MIT Sloan نشان می‌دهد OKR با ایجاد بازبینی‌های دوره‌ای (دوهفته‌ای یا ماهانه) و فرهنگ شفافیت، انطباق‌پذیری را در محیط‌های پرتغییر افزایش می‌دهد. در پیاده‌سازی، اهداف سطح تیم یا سازمان ابتدا تعیین می‌شوند و سپس اهداف فردی در هماهنگی با آن‌ها فرمول‌بندی می‌شوند.</p>
+<p><strong>ارزیابی ۳۶۰ درجه</strong> با گردآوری بازخورد ساختاریافته و ناشناس از مدیر، همکاران، زیردستان و ذی‌نفعان بیرونی، شکاف بین خودادراکی فرد و ادراک دیگران را آشکار می‌کند. این شکاف، ورودی اصلی IDP است: فرد نمی‌تواند برنامهٔ توسعه بنویسد مگر اینکه بداند دیگران عملکرد او را چگونه می‌بینند.</p>
+<p><strong>Calibration</strong> (کالیبراسیون) جلسه‌ای ساختاریافته بین مدیران و شرکای منابع انسانی است که در آن امتیازهای ارزیابی با معیارهای یکسان بازبینی می‌شوند. هدف آن کاهش سوگیری و یکسان‌سازی درک از استاندارد عملکرد است. با این حال، Korn Ferry هشدار می‌دهد که Calibration می‌تواند برخی سوگیری‌ها را تشدید کند (مانند سوگیری مرکزیت—تمایل به امتیازدهی در میانهٔ طیف) و اگر به پاداش گره بخورد، به رقابت برای «بلندتر فریاد زدن» تبدیل می‌شود. بهترین رویه: تعریف معیارها از پیش، تخصیص زمان کافی، و جدا کردن Calibration از بحث حقوق و پاداش.</p>
+<p><strong>IDP</strong> به‌عنوان خروجی نهایی چرخه، سندی مکتوب است که شکاف شایستگی شناسایی‌شده در ارزیابی را به اقدامات یادگیری مشخص (آموزش رسمی، کوچینگ، پروژه‌های توسعه‌ای، جانشینی در نقش) ترجمه می‌کند. مدل رایج ۷۰-۲۰-۱۰ در طراحی IDP، تأکید را بر یادگیری تجربی (۷۰٪) در برابر آموزش رسمی (۱۰٪) می‌گذارد. IDP بدون پیوند با ارزیابی عملکرد، به یک فرم تشریفاتی تبدیل می‌شود؛ و ارزیابی بدون IDP، به یک قضاوت بدون پیامد.</p>
+
+<h3>جمع‌بندی: مدل استاندارد به‌عنوان Baseline</h3>
+<p>از ترکیب این چهار محور، مدل استاندارد مدیریت عملکرد کارکنان به‌عنوان مرجع معیار (Baseline) قابل تعریف است: استانداردها «چه باید باشد» را تعریف می‌کنند (ISO 30414 برای گزارش‌دهی، ISO 10015 برای پیوند شایستگی-توسعه، ISO 9001 برای قابلیت اتکای داده) و چارچوب‌های عملیاتی «چگونه» را مشخص می‌کنند (OKR برای هدف‌گذاری، ۳۶۰ برای بازخورد چندمنبعی، Calibration برای کاهش سوگیری، IDP برای توسعه). در تحلیل Fit &amp; Gap بخش‌های بعدی، هر یک از این اجزا به یک معیار سنجش قابل اندازه‌گیری تبدیل می‌شود.</p>
+
+<h2>۳. امکانات ماژول Appraisals در Odoo نسخهٔ ۱۸</h2>
+<p>ماژول Appraisals بومی Odoo (Enterprise) مجموعه‌ای از قابلیت‌های استاندارد برای مدیریت ارزیابی عملکرد ارائه می‌دهد. بر اساس مستندات رسمی Odoo 18، ویژگی‌های اصلی عبارت‌اند از:</p>
+
+<h3>۳.۱. قالب‌های ارزیابی (Appraisal Templates)</h3>
+<ul>
+  <li>قالب پیش‌فرض عمومی و امکان ایجاد قالب‌های سفارشی بر اساس دپارتمان.</li>
+  <li>سؤالات متنی برای خودارزیابی کارمند و بازخورد مدیر.</li>
+</ul>
+
+<h3>۳.۲. گردش کار ارزیابی</h3>
+<ul>
+  <li>ایجاد ارزیابی دستی یا خودکار بر اساس Appraisals Plan (زمان‌بندی بر پایهٔ ماه‌های پس از استخدام).</li>
+  <li>دوسویه بودن بازخورد (کارمند و مدیر).</li>
+  <li>کنترل Visibility: کارمند می‌تواند خودارزیابی را تا زمان مشخص مخفی نگه دارد.</li>
+  <li>ادغام با تقویم برای زمان‌بندی جلسهٔ بازخورد.</li>
+</ul>
+
+<h3>۳.۳. بازخورد ۳۶۰ درجه</h3>
+<ul>
+  <li>امکان درخواست بازخورد از همکاران و زیرمجموعه‌ها از طریق نظرسنجی (Survey).</li>
+  <li>داشبورد 360 Feedback برای مدیریت نظرسنجی‌ها.</li>
+</ul>
+<div class="limit"><strong>محدودیت مهم:</strong> انتخاب همکاران برای بازخورد ۳۶۰ درجه کاملاً دستی است؛ مدیر باید در فرم ارزیابی، دکمهٔ «Ask Feedback» را بزند و از فیلد «Recipients» افراد را یکی‌یکی انتخاب کند. هیچ سازوکار خودکار (مثلاً انتخاب تصادفی، انتخاب بر اساس ساختار سازمانی، یا پیشنهاد هوشمند همکاران) وجود ندارد. این محدودیت در سازمان‌های بزرگ یا ماتریسی، بار عملیاتی قابل‌توجهی ایجاد می‌کند و خطر سوگیری در انتخاب بازخورددهندگان (انتخاب افراد هم‌رأی یا نزدیک) را افزایش می‌دهد.</div>
+
+<h3>۳.۴. مدیریت اهداف (Goals)</h3>
+<ul>
+  <li>ایجاد اهداف با درصد پیشرفت (۰٪، ۲۵٪، ۵۰٪، ۷۵٪، ۱۰۰٪).</li>
+  <li>تگ‌گذاری اهداف (Hard Skills، Soft Skills، Training و ...).</li>
+  <li>ارتباط اهداف با ارزیابی.</li>
+</ul>
+<div class="limit"><strong>محدودیت مهم:</strong> اهداف تعریف‌شده در Odoo 18 به هیچ هدف بالادستی یا ساختار سلسله‌مراتبی متصل نیستند. مستندات رسمی Odoo 18 برای ماژول Appraisals فقط امکان تعریف هدف، تخصیص به کارمند، تعیین سررسید، تگ و درصد پیشرفت را ذکر کرده و هیچ اشاره‌ای به «Parent Goal»، «Sub-Goal» یا اتصال اهداف فردی به اهداف سازمانی/دپارتمانی ندارد. بنابراین اهداف در Odoo 18 به‌صورت منفرد و جزیره‌ای عمل می‌کنند و امکان هم‌راستاسازی عمودی (سازمان←تیم←فرد)—که یکی از ارکان مدل استاندارد (OKR) است—فراهم نیست.</div>
+
+<h3>۳.۵. مهارت‌ها (Skills)</h3>
+<ul>
+  <li>به‌روزرسانی سطح مهارت‌های کارمند در حین ارزیابی.</li>
+  <li>افزودن مهارت جدید و ثبت توجیه.</li>
+</ul>
+
+<h3>۳.۶. گزارش‌گیری و تحلیل</h3>
+<ul>
+  <li>گزارش Appraisal Analysis با نمای گراف و گانت.</li>
+  <li>گروه‌بندی بر اساس دپارتمان، وضعیت و ماه.</li>
+</ul>
+
+<h3>۳.۷. محدودیت‌های شناخته‌شدهٔ ماژول بومی Appraisals در نسخهٔ ۱۸</h3>
+<ul>
+  <li>وزن‌دهی عددی دقیق معیارها و محاسبهٔ امتیاز نهایی خودکار محدود است.</li>
+  <li>Workflow فازبندی‌شدهٔ پیشرفته (با بازه‌های زمانی جداگانه برای هر نوع ارزیاب) وجود ندارد.</li>
+  <li>برنامهٔ توسعهٔ فردی (IDP) به‌صورت ماژول مستقل وجود ندارد.</li>
+  <li>بازخورد مستمر خارج از چرخهٔ ارزیابی محدود است.</li>
+  <li>Calibration Session رسمی پشتیبانی نمی‌شود.</li>
+  <li>کارنامهٔ عملکرد رسمی با صدور و ارسال خودکار وجود ندارد.</li>
+  <li>پشتیبانی بومی از زبان فارسی و رابط کاملاً RTL محدود است.</li>
+  <li><strong>محدودیت دسترسی کاربران پورتال:</strong> فرم ارزیابی فقط برای «کاربران داخلی» با حساب کامل قابل استفاده است؛ کارمندانی که فقط دسترسی پورتال دارند، نمی‌توانند خودارزیابی را تکمیل کنند و لینک ایمیل آن‌ها را به صفحه‌ای بدون دسترسی هدایت می‌کند. این محدودیت برای سازمان‌هایی که همهٔ کارکنان را کاربر کامل Odoo نمی‌کنند، دامنهٔ استفاده را به‌شدت محدود می‌کند.</li>
+  <li><strong>انتخاب دستی بازخورددهندگان ۳۶۰ درجه:</strong> در فرم ارزیابی، مدیر باید دکمهٔ «Ask Feedback» را بزند و گیرندگان را یکی‌یکی از فیلد «Recipients» انتخاب کند؛ هیچ سازوکار خودکار، تصادفی یا مبتنی بر ساختار سازمانی برای انتخاب همکاران وجود ندارد. این محدودیت بار عملیاتی ایجاد می‌کند و خطر سوگیری در انتخاب بازخورددهندگان (انتخاب افراد هم‌رأی) را افزایش می‌دهد.</li>
+  <li><strong>اهداف جزیره‌ای و بدون اتصال سلسله‌مراتبی:</strong> در Odoo 18، اهداف به‌صورت مستقل تعریف می‌شوند و هیچ فیلد «Parent Goal» یا ساختار درختی برای اتصال اهداف فردی به اهداف دپارتمانی یا سازمانی وجود ندارد. مستندات رسمی Odoo 18 فقط ایجاد هدف، تخصیص، سررسید، تگ و درصد پیشرفت را ذکر کرده است. بنابراین هم‌راستاسازی عمودی اهداف—رکن اصلی OKR—در Odoo 18 بومی پشتیبانی نمی‌شود.</li>
+  <li><strong>گزارش تحول مهارت‌ها فقط پس از تکمیل اولین ارزیابی:</strong> گزارش Skills Evolution تنها مهارت‌های کارکنانی را نشان می‌دهد که حداقل یک ارزیابی «تکمیل‌شده» دارند؛ تغییرات مهارتی در ارزیابی‌های در جریان یا پیش‌نویس در گزارش لحاظ نمی‌شود. این محدودیت برای سازمان‌هایی که می‌خواهند پیشرفت مهارتی را در چرخه‌های میان‌دوره‌ای رصد کنند، کافی نیست.</li>
+  <li><strong>نبود کتابخانهٔ قالب هدف از پیش تعریف‌شده:</strong> در Odoo 18، هیچ قالب هدفی به‌صورت پیش‌فرض در سیستم وجود ندارد و همهٔ اهداف باید از ابتدا توسط کاربر ساخته شوند. این موضوع پیاده‌سازی اولیه را زمان‌بر می‌کند و برای سازمان‌های بزرگ بدون تیم منابع انسانی اختصاصی، مانع عملیاتی ایجاد می‌کند.</li>
+  <li><strong>عدم وجود اجرای گروهی بومی (Bulk/Campaign) برای ارزیابی عملکرد:</strong> در Odoo 18 بومی، هیچ ابزار داخلی برای ایجاد یکجای ارزیابی‌ها برای تعداد زیادی از کارکنان وجود ندارد. مدیر منابع انسانی یا مدیران باید برای هر کارمند به‌صورت جداگانه فرم ارزیابی ایجاد کنند یا از طریق تنظیمات زمان‌بندی خودکار (Appraisals Automation) که بر اساس تاریخ استخدام هر فرد عمل می‌کند، پیش بروند. برای سازمان‌های با پرسنل زیاد، این نبودِ «کمپین ارزیابی» یا «ویزارد ایجاد گروهی» به معنای بار عملیاتی بسیار سنگین و غیرعملی است.</li>
+</ul>
+
+<h2>۴. امکانات و قابلیت‌های ماژول توسعه‌یافتهٔ مدیریت عملکرد کارکنان</h2>
+<p>ماژول توسعه‌یافتهٔ مدیریت عملکرد کارکنان، یک سامانهٔ جامع، یکپارچه و تخصصی در حوزهٔ مدیریت و ارزیابی عملکرد منابع انسانی است که با برخورداری از رابط کاربری کاملاً فارسی و متناسب با نیازها و الزامات سازمانی طراحی و پیاده‌سازی شده است.</p>
+<p>این سامانه حاصل فرایند نظام‌مند نیازسنجی، تحلیل کسب‌وکار، شناسایی الزامات عملکردی، طراحی فرایندها، معماری راهکار و توسعهٔ نرم‌افزاری توسط علیرضا مختاری بوده و با هدف استقرار یک نظام اثربخش، شفاف و ساختاریافته برای مدیریت، پایش و بهبود عملکرد کارکنان توسعه یافته است.</p>
+<p>در طراحی و توسعهٔ این سامانه، تلاش شده است ضمن بهره‌گیری از مفاهیم، رویکردها و الزامات استانداردهای معتبر حوزهٔ مدیریت عملکرد، چرخهٔ کامل مدیریت عملکرد کارکنان از مرحلهٔ هدف‌گذاری و برنامه‌ریزی عملکرد تا ارزیابی، تحلیل نتایج، ارائهٔ بازخورد و شناسایی زمینه‌های بهبود و توسعهٔ فردی و سازمانی پوشش داده شود. همچنین ساختار سامانه با در نظر گرفتن نیازهای عملیاتی سازمان‌ها، قابلیت پشتیبانی از سطوح مختلف سازمانی، نقش‌ها و مسئولیت‌ها و فرایندهای ارزیابی را فراهم می‌کند. تحلیل فنی و عملکردی ارائه‌شده در ادامه، بر مبنای بررسی جامع سورس‌کد ماژول و اجزای مختلف آن انجام شده است. این بررسی شامل تحلیل ساختار و ارتباط مدل‌های اطلاعاتی، فرم‌ها و نماهای کاربری (Views)، داده‌ها و تنظیمات پایه، سازوکارهای امنیتی و سطوح دسترسی، گردش‌کارها، ویزاردها و منطق اجرایی فرایندهای مختلف سامانه است. هدف از این تحلیل، شناسایی قابلیت‌های پیاده‌سازی‌شده، ارزیابی میزان انطباق آن‌ها با الزامات یک نظام استاندارد مدیریت عملکرد و بررسی نقاط قوت، محدودیت‌ها و ظرفیت‌های توسعه‌ای سامانه است.</p>
+<p>بر این اساس، گزارش حاضر تصویری مستند از معماری، قابلیت‌ها و منطق عملکردی ماژول ارائه می‌دهد و مبنایی برای ارزیابی جامع راهکار، بررسی میزان پوشش نیازمندی‌های سازمانی و تعیین مسیر توسعه و بهبود آتی آن خواهد بود. در ادامه، امکانات و قابلیت‌های ماژول توسعه‌یافتهٔ مدیریت عملکرد کارکنان در Odoo 19 به‌تفصیل بررسی می‌شود:</p>
+
+<h3>۴-۱) طراحی و راهبری دوره‌های ارزیابی عملکرد کارکنان</h3>
+<ul>
+  <li>تعریف دورهٔ ارزیابی با بازهٔ زمانی، محدودهٔ شرکت و واحد سازمانی، و نوع فرایند ارزیابی.</li>
+  <li>زمان‌بندی خودکار باز شدن دوره.</li>
+  <li>بازهٔ زمانی جداگانه برای هر فاز: خودارزیابی، ارزیابی مدیر، همکار، زیرمجموعه.</li>
+  <li>پشتیبانی از چهار الگوی ارزیابی: مدیرمحور، مدیر به‌همراه خودارزیابی، افزودن ارزیابی همکار، و ارزیابی ۳۶۰ درجه.</li>
+  <li>قالب معیار مستقل برای هر نقش (خود، همکار، زیرمجموعه) با امکان تعیین قالب پیش‌فرض.</li>
+  <li>وزن‌دهی شفاف میان خودارزیابی، مدیر، همکار، زیرمجموعه و تحقق اهداف، به‌همراه پیش‌نمایش کارتی و ماتریسی.</li>
+  <li>قاعدهٔ مشخص برای نقش‌های فاقد داده: بازتوزیع وزن، حفظ وزن اهداف، یا حذف آن نقش از محاسبه.</li>
+  <li>انتخاب ارزیاب همکار از درون واحد، بیرون واحد، هر دو، یا به‌صورت موردی توسط منابع انسانی، همراه با سقف تعداد.</li>
+  <li>امکان ناشناس‌سازی بازخورد همکار و زیردست.</li>
+  <li>اجرای مرحله‌ای یا هم‌زمان مراحل، با مهلت جداگانه و زمان‌بندی خودکار برای هر نقش.</li>
+  <li>کنترل همپوشانی دوره‌ها و مدیریت وضعیت‌های پیش‌نویس، باز، در جریان، بازبینی نهایی، مختومه و لغو.</li>
+  <li>تولید و به‌روزرسانی فرم‌ها بر پایهٔ چارت سازمانی، خاتمهٔ یکجای دوره، صدور و ارسال دسته‌ای کارنامه، و امکان بازگشایی.</li>
+</ul>
+
+<h3>۴-۲) اجرای ارزیابی</h3>
+<ul>
+  <li>خودارزیابی، ارزیابی مدیر مستقیم، و امتیازدهی همکار و زیرمجموعه در فرم‌های تفکیک‌شده.</li>
+  <li>ثبت برگزاری جلسهٔ بازخورد و جمع‌بندی پس از جلسه.</li>
+  <li>بستن، بازگشایی و لغو ارزیابی با حفظ سابقهٔ تغییرات.</li>
+  <li>مشاهدهٔ فرم صرفاً برای ارزیابی‌شونده، مدیر مستقیم، ارزیاب همان فرم، یا راهبر سامانه.</li>
+  <li>کارتابل تفکیک‌شده: ارزیابی‌های من، بازخوردهای محول‌شده، تیم، و کل سازمان.</li>
+</ul>
+
+<h3>۴-۳) چارچوب شایستگی و امتیازدهی</h3>
+<ul>
+  <li>کتابخانهٔ معیارهای استاندارد و دسته‌بندی آن‌ها برای استفادهٔ مجدد.</li>
+  <li>قالب‌های وزنی با کنترل جمع وزن‌ها و محدودسازی قالب به انواع ارزیابی مجاز.</li>
+  <li>مقیاس امتیاز با بازه، سطوح عنوان‌دار و رنگی، پشتیبانی از امتیاز اعشاری، و هم‌ترازی سطوح با حدود عددی.</li>
+</ul>
+
+<h3>۴-۴) اهداف و نتایج کلیدی</h3>
+<ul>
+  <li>تعریف هدف با وزن، درصد پیشرفت و وضعیت «در مسیر»، «در خطر» یا «تکمیل‌شده».</li>
+  <li>شکست هدف به نتایج کلیدی و پیگیری وضعیت‌های تأیید، شروع، تکمیل و لغو.</li>
+  <li>اتصال هدف به دوره و فرم ارزیابی و محاسبهٔ سهم تحقق اهداف در امتیاز نهایی.</li>
+  <li>دسترسی پلکانی: اهداف فردی، اهداف تیم (سلسله‌مراتب مستقیم و غیرمستقیم)، و نمای سازمان برای راهبر.</li>
+</ul>
+
+<h3>۴-۵) بازخورد مستمر و توسعهٔ فردی</h3>
+<ul>
+  <li>ثبت بازخورد از نوع تشویق، بازخورد سازنده، پیشنهاد و قدردانی، مستقل از دورهٔ رسمی.</li>
+  <li>کنترل سطح انتشار: خصوصی، قابل مشاهده برای مدیر، یا عمومی.</li>
+  <li>برنامهٔ توسعهٔ فردی با نقاط قوت، حوزه‌های رشد و اقداماتی مانند آموزش، کوچینگ و پروژه.</li>
+  <li>گردش تأیید تا تکمیل یا لغو، و ایجاد برنامه مستقیماً از نتیجهٔ ارزیابی.</li>
+</ul>
+
+<h3>۴-۶) کارنامه و نتیجهٔ نهایی</h3>
+<ul>
+  <li>امتیاز ترکیبی از خودارزیابی، مدیر، همکار، زیرمجموعه و تحقق اهداف.</li>
+  <li>رتبه، درصد، سطح عملکرد، نقاط قوت، حوزه‌های قابل بهبود و بازخورد مدیر.</li>
+  <li>شفاف‌سازی منطق محاسبه و گردش ارزیابان.</li>
+  <li>تحویل کارنامه به ارزیابی‌شونده و خروجی PDF.</li>
+  <li>امکان صدور و ارسال کارنامه به‌صورت فردی و گروهی (بر اساس شرکت و دپارتمان) در قالب‌های طراحی‌شدهٔ گرافیکی و کاربرپسند.</li>
+</ul>
+
+<h3>۴-۷) پایش مدیریتی و گزارش</h3>
+<ul>
+  <li>داشبورد وضعیت ارزیابی‌ها، توزیع امتیاز و پیشرفت اهداف.</li>
+  <li>پایش زندهٔ سازمان بر اساس شرکت، دوره و ارزیابی، با بازسازی کارت‌ها؛ در این پایش زنده، هر اقدام در دورهٔ ارزیابی به‌صورت Feed و به‌طور لحظه‌ای قابل مشاهده است. این قابلیت را می‌توان نخستین نمونه از پایش زندهٔ رویدادهای ارزیابی در اکوسیستم Odoo دانست؛ در مستندات رسمی Odoo 18 و 19 و در ماژول‌های رایج مدیریت عملکرد، سازوکار مشابهی گزارش نشده است.</li>
+  <li>تحلیل وضعیت ارزیابی، امتیاز واحدها و سلامت اهداف.</li>
+  <li>گزارش فرم‌های دوره به‌صورت درختی، خلاصهٔ پیشرفت، کارنامه، رتبه‌بندی، تفکیک واحد، مقایسهٔ دوره‌ها، شایستگی‌ها، اهداف و عملکرد مدیران.</li>
+</ul>
+
+<h3>۴-۸) یکپارچگی با منابع انسانی و کنترل دسترسی</h3>
+<ul>
+  <li>میانبر و شاخص ارزیابی، هدف، بازخورد و برنامهٔ توسعه در پروندهٔ کارمند، به‌همراه آخرین امتیاز و تاریخ آن.</li>
+  <li>سطوح دسترسی مبتنی بر نقش در سامانه اعمال می‌شود: کارکنان صرفاً به داده‌های خود، مدیران به محدودهٔ تیم، و راهبر عملکرد به کل سامانه دسترسی دارند.</li>
+  <li>تعیین ارزیاب، همکار و زیرمجموعهٔ پیش‌فرض مستقیماً از چارت سازمانی و به‌صورت کاملاً خودکار و غیردستی.</li>
+  <li>اعلان و ایمیل در نقاط کلیدی فرایند، راهنمای کاربری، و رابط فارسی گرافیکی و کاربرپسند.</li>
+  <li>فرم‌های ارزیابی بر اساس نوع ارزیابی، به‌صورت کاملاً خودکار از چارت سازمانی استخراج و تخصیص داده می‌شوند؛ این فرایند پویاست و هیچ تخصیص دستی در آن راه ندارد.</li>
+</ul>
+
+<h2>۵. مدل ارزیابی عملکرد گروه صنایع گیتی‌پسند</h2>
+<p>مدل ارائه‌شده یک سیستم ارزیابی عملکرد صرفاً از بالا به پایین (۹۰ درجه) است که برای گروه صنایع گیتی‌پسند ایجاد شده و تحلیل زیر بر پایهٔ قابلیت‌های اصلی آن تدوین شده است.</p>
+
+<h3>۵.۱. ساختار کلی فرایند</h3>
+<ul>
+  <li>فرایندی مشخص و مرحله‌بندی‌شده.</li>
+  <li>تمرکز اصلی بر صرفاً ارزیابی از بالا به پایین (مدیر، ارزیاب کارمند است).</li>
+  <li>در جریان اصلی، نشانه‌ای از خودارزیابی، ارزیابی همکار یا زیرمجموعه دیده نمی‌شود (الگوی ۹۰ درجه).</li>
+</ul>
+
+<h3>۵.۲. کتابخانهٔ معیارها و زیرمعیارها</h3>
+<ul>
+  <li>امکان تعریف معیارها.</li>
+  <li>امکان تعریف زیرمعیار برای هر معیار.</li>
+  <li>طیف پاسخ‌های قابل تعریف (صرفاً لیکرت پیوسته، مقیاس امتیازدهی).</li>
+</ul>
+
+<h3>۵.۳. فرم‌های ارزیابی</h3>
+<ul>
+  <li>ایجاد فرم ارزیابی و افزودن شاخص‌ها (معیار/زیرمعیار) به فرم.</li>
+  <li>مشاهدهٔ فرم ارزیابی عملکرد کارکنان.</li>
+  <li>فرم ثبت عملکرد ویژهٔ کارکنان، جدا از ارزیابی دوره‌ای.</li>
+</ul>
+
+<h3>۵.۴. عملیات ارزیابی (چرخه)</h3>
+<ul>
+  <li>ایجاد عملیات ارزیابی با عنوان، توضیحات، فرم انتخابی، تاریخ شروع و پایان.</li>
+  <li>شرط فعال‌شدن بر پایهٔ تاریخ استخدام و سابقهٔ کار.</li>
+  <li>انتخاب محدودهٔ سازمانی (شرکت‌ها/واحدها از نمودار سازمانی).</li>
+</ul>
+
+<h3>۵.۵. کارتابل ارزیاب و تأییدکننده</h3>
+<ul>
+  <li>کارتابل ارزیابی برای ارزیاب (مدیر).</li>
+  <li>مشاهدهٔ ارزیابی‌شوندگان و تکمیل ارزیابی.</li>
+  <li>کارتابل تأییدکننده برای تأیید نهایی ارزیابی.</li>
+  <li>ثبت عملکرد ویژه توسط ارزیاب.</li>
+</ul>
+
+<h3>۵.۶. خروجی‌ها</h3>
+<ul>
+  <li>کارنامهٔ ارزیابی عملکرد (شامل امتیاز معیارها و نمره).</li>
+  <li>گزارش ارزیابی عملکرد کارکنان.</li>
+  <li>مشاهدهٔ کارنامه توسط ارزیابی‌شونده و ارزیاب در کارتابل.</li>
+</ul>
+
+<h3>۵.۷. جمع‌بندی مدل گیتی‌پسند</h3>
+<p>مدل گیتی‌پسند یک سیستم ارزیابی عملکرد کلاسیک از بالا به پایین است که بر کتابخانهٔ معیارهای سازمانی، فرم‌های ساختاریافته، عملیات (چرخه) با محدودهٔ سازمانی، کارتابل ارزیاب/تأییدکننده و کارنامه تمرکز دارد. این مدل از خودارزیابی، ارزیابی ۳۶۰ درجه، اهداف و OKR، برنامهٔ توسعهٔ فردی (IDP) و بازخورد مستمر بی‌بهره است و بیشتر بر ارزیابی دوره‌ای ساختاریافته و ثبت عملکرد ویژه تأکید دارد.</p>
+
+<h2>۶. ماتریس تطبیق و شکاف (Fit &amp; Gap)</h2>
+<p>در این بخش، ماتریس تطبیق و شکاف بین چهار مرجع ارائه می‌شود. مرجع سنجش، مدل استاندارد (بخش ۲) است.</p>
+<p class="note"><strong>راهنمای رنگ‌ها:</strong>
+  <span style="background:#d4edda;color:#155724;padding:2px 8px;border-radius:4px;">✔ پوشش کامل</span>
+  <span style="background:#fff3cd;color:#856404;padding:2px 8px;border-radius:4px;">◐ پوشش نسبی</span>
+  <span style="background:#f8d7da;color:#721c24;padding:2px 8px;border-radius:4px;">✘ عدم پوشش</span>
+  <span style="background:#e2e3e5;color:#383d41;padding:2px 8px;border-radius:4px;">— بی‌ربط</span>
+</p>
+
+<div class="mx-block">
+<h3>۶.۱. ماتریس اصلی چهار جانبه مدل استاندارد با ماژول توسعه یافته، ماژول بومی Appraisals Odoo 18 و مدل گیتی پسند</h3>
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>محور قابلیت (Baseline)</th>
+  <th>ماژول توسعه‌یافته</th>
+  <th>Appraisals بومی Odoo 18</th>
+  <th>مدل گیتی‌پسند</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>۱</td><td>چرخهٔ زمان‌بندی‌شدهٔ ارزیابی</td><td class="cell-full">✔ تعریف دوره با بازه، زمان‌بندی خودکار باز شدن، مهلت جداگانه هر فاز</td><td class="cell-partial">◐ زمان‌بندی خودکار بر پایهٔ ماه‌های پس از استخدام؛ بدون فازبندی مستقل</td><td class="cell-partial">◐ عملیات با تاریخ شروع/پایان و شرط استخدام؛ بدون فازبندی</td></tr>
+<tr><td>۲</td><td>قالب ارزیابی قابل سفارشی‌سازی</td><td class="cell-full">✔ قالب مستقل برای هر نقش + قالب پیش‌فرض</td><td class="cell-partial">◐ قالب پیش‌فرض + سفارشی بر اساس دپارتمان</td><td class="cell-partial">◐ فرم ساختاریافته با معیار/زیرمعیار</td></tr>
+<tr><td>۳</td><td>خودارزیابی</td><td class="cell-full">✔</td><td class="cell-full">✔</td><td class="cell-none">✘</td></tr>
+<tr><td>۴</td><td>ارزیابی مدیر</td><td class="cell-full">✔</td><td class="cell-full">✔</td><td class="cell-full">✔</td></tr>
+<tr><td>۵</td><td>ارزیابی ۳۶۰ درجه (همکار/زیرمجموعه)</td><td class="cell-full">✔ انتخاب خودکار از چارت + ناشناس‌سازی</td><td class="cell-partial">◐ انتخاب کاملاً دستی؛ وابسته به Surveys</td><td class="cell-none">✘</td></tr>
+<tr><td>۶</td><td>وزن‌دهی عددی و محاسبهٔ خودکار امتیاز</td><td class="cell-full">✔ وزن‌دهی شفاف + پیش‌نمایش کارتی/ماتریسی + قاعدهٔ نقش فاقد داده</td><td class="cell-none">✘ وزن‌دهی دقیق محدود؛ امتیاز کیفی</td><td class="cell-partial">◐ امتیاز معیارها بدون وزن‌دهی چندمنبعی</td></tr>
+<tr><td>۷</td><td>هم‌راستاسازی اهداف (OKR)</td><td class="cell-partial">◐ هدف + نتایج کلیدی + اتصال به دوره؛ بدون سلسله‌مراتب Parent/Sub Goal</td><td class="cell-none">✘ اهداف جزیره‌ای؛ بدون Parent Goal</td><td class="cell-none">✘</td></tr>
+<tr><td>۸</td><td>برنامهٔ توسعهٔ فردی (IDP)</td><td class="cell-full">✔ ماژول مستقل + گردش تأیید + ایجاد از نتیجهٔ ارزیابی</td><td class="cell-none">✘</td><td class="cell-none">✘</td></tr>
+<tr><td>۹</td><td>بازخورد مستمر (Continuous Feedback)</td><td class="cell-full">✔ مستقل از دوره + کنترل انتشار</td><td class="cell-none">✘ محدود به چرخه</td><td class="cell-none">✘</td></tr>
+<tr><td>۱۰</td><td>جلسهٔ بازخورد</td><td class="cell-full">✔ ثبت برگزاری + جمع‌بندی</td><td class="cell-partial">◐ ادغام با تقویم</td><td class="cell-none">✘</td></tr>
+<tr><td>۱۱</td><td>Calibration Session</td><td class="cell-partial">◐ پشتیبانی رسمی ندارد اما وزن‌دهی و بازبینی نهایی دارد</td><td class="cell-none">✘</td><td class="cell-none">✘</td></tr>
+<tr><td>۱۲</td><td>کارنامهٔ عملکرد رسمی</td><td class="cell-full">✔ امتیاز ترکیبی + رتبه + PDF + صدور فردی/گروهی</td><td class="cell-none">✘</td><td class="cell-partial">◐ کارنامه با امتیاز معیارها</td></tr>
+<tr><td>۱۳</td><td>گزارش‌های تحلیلی</td><td class="cell-full">✔ داشبورد + پایش زنده + ۹ گزارش تحلیلی</td><td class="cell-partial">◐ Appraisal Analysis + Skills Evolution (مشروط)</td><td class="cell-partial">◐ گزارش ارزیابی کارکنان</td></tr>
+<tr><td>۱۴</td><td>پایش زندهٔ رویدادها (Feed)</td><td class="cell-full">✔ نوآورانه</td><td class="cell-none">✘</td><td class="cell-none">✘</td></tr>
+<tr><td>۱۵</td><td>اجرای گروهی/کمپین ارزیابی</td><td class="cell-full">✔ خاتمهٔ یکجا + صدور دسته‌ای + تولید انبوه از چارت</td><td class="cell-none">✘</td><td class="cell-partial">◐ محدودهٔ سازمانی در عملیات</td></tr>
+<tr><td>۱۶</td><td>کنترل دسترسی مبتنی بر نقش (RBAC)</td><td class="cell-full">✔ سه سطح نقش‌محور</td><td class="cell-partial">◐ کاربر داخلی/پورتال (محدود)</td><td class="cell-partial">◐ ارزیاب/تأییدکننده</td></tr>
+<tr><td>۱۷</td><td>رابط فارسی و RTL</td><td class="cell-full">✔ کاملاً فارسی و راست‌به‌چپ</td><td class="cell-none">✘ محدود</td><td class="cell-partial">◐ بستگی به پیاده‌سازی</td></tr>
+<tr><td>۱۸</td><td>تخصیص خودکار ارزیاب از چارت سازمانی</td><td class="cell-full">✔ کاملاً خودکار و پویا</td><td class="cell-partial">◐ مدیر مستقیم به‌صورت پیش‌فرض</td><td class="cell-partial">◐ انتخاب محدودهٔ سازمانی</td></tr>
+<tr><td>۱۹</td><td>گزارش‌دهی سرمایهٔ انسانی (ISO 30414)</td><td class="cell-partial">◐ داده‌های لازم تولید می‌شود اما گزارش اختصاصی ISO ندارد</td><td class="cell-none">✘</td><td class="cell-none">✘</td></tr>
+<tr><td>۲۰</td><td>پیوند شایستگی-توسعه (ISO 10015)</td><td class="cell-full">✔ IDP + کتابخانهٔ معیار + اقدامات توسعه</td><td class="cell-none">✘</td><td class="cell-none">✘</td></tr>
+<tr><td>۲۱</td><td>قابلیت اتکای داده برای بازنگری مدیریت (ISO 9001)</td><td class="cell-full">✔ گزارش‌های تحلیلی متعدد</td><td class="cell-partial">◐ گزارش محدود</td><td class="cell-partial">◐ کارنامه و گزارش</td></tr>
+<tr><td>۲۲</td><td>مقیاس امتیاز پیشرفته (بازه، سطح، اعشاری)</td><td class="cell-full">✔</td><td class="cell-partial">◐ چهار گزینهٔ کیفی پیش‌فرض</td><td class="cell-partial">◐ طیف لیکرت پیوسته</td></tr>
+</tbody>
+</table>
+<div class="mx-out a"><strong>نتیجه‌گیری ماتریس اصلی</strong>
+ماژول توسعه‌یافته در ۱۹ محور پوشش کامل و در ۳ محور پوشش نسبی دارد و هیچ محور بدون پوشش ندارد. فاصلهٔ اصلی آن با مدل استاندارد، سلسله‌مراتب کامل OKR و نبود جلسهٔ رسمی Calibration است. Appraisals بومی Odoo 18 فقط در خودارزیابی، ارزیابی مدیر و بخش‌هایی از قالب و تقویم نزدیک به خط پایه است و در وزن‌دهی، IDP، کارنامه و اجرای گروهی عقب می‌ماند. مدل گیتی‌پسند در ارزیابی مدیر، فرم معیارمحور و کارنامهٔ ساده قوی است، اما خودارزیابی، ۳۶۰، هدف، IDP و بازخورد مستمر را پوشش نمی‌دهد.
+</div>
+</div>
+
+<div class="mx-block">
+<h3>۶.۲. درصد مطابقت کلی (بر پایهٔ ۲۲ محور)</h3>
+<table>
+<thead>
+<tr><th>مرجع</th><th>پوشش کامل (✔)</th><th>پوشش نسبی (◐)</th><th>عدم پوشش (✘)</th><th>درصد مطابقت</th></tr>
+</thead>
+<tbody>
+<tr><td>ماژول توسعه‌یافته</td><td>۱۹</td><td>۳</td><td>۰</td><td class="pct-high">۸۶٪ (با احتساب نسبی: ۹۳٪)</td></tr>
+<tr><td>Appraisals بومی Odoo 18</td><td>۲</td><td>۹</td><td>۱۱</td><td class="pct-low">۹٪ (با احتساب نسبی: ۳۰٪)</td></tr>
+<tr><td>مدل گیتی‌پسند</td><td>۱</td><td>۱۰</td><td>۱۱</td><td class="pct-low">۵٪ (با احتساب نسبی: ۲۷٪)</td></tr>
+</tbody>
+</table>
+<div class="mx-out f"><strong>راهنمای خواندن دو درصد مطابقت</strong>
+در هر خانه دو عدد هست و وزن یکسانی ندارند.
+درصد اصلی، عدد بیرون پرانتز است: تعداد محورهای با پوشش کامل (✔) تقسیم بر ۲۲. یعنی فقط قابلیتی شمرده می‌شود که در آن مرجع واقعاً وجود دارد، نه چیزی شبیه آن. این درصد معیار تصمیم است و خیلی مهم‌تر از عدد داخل پرانتز است؛ مقایسهٔ سه مرجع باید اول با همین عدد انجام شود.
+«با احتساب نسبی»، عدد داخل پرانتز است: (تعداد ✔ به‌اضافهٔ نصف تعداد ◐) تقسیم بر ۲۲. به پوشش نصفه هم نیم‌امتیاز می‌دهد، پس تصویر خوش‌بینانه‌تری می‌سازد و شکاف را کوچک‌تر از واقعیت نشان می‌دهد. این عدد فقط مکمل است و جای درصد اصلی را نمی‌گیرد. اگر محوری برای سازمان حیاتی باشد، ◐ به‌معنای «حل شده» نیست.
+ترتیب جدول در هر دو عدد یکی است: ماژول توسعه‌یافته، سپس Odoo 18 بومی، سپس گیتی‌پسند. جابه‌جایی فقط در اندازهٔ فاصله است، نه در رتبه. اگر کسی به‌اشتباه ۲۷٪ گیتی‌پسند را با ۹٪ اودو مقایسه کند، گیتی‌پسند جلوتر به نظر می‌رسد؛ آن مقایسه غلط است، چون ۲۷٪ درصد نسبی است و باید با ۳۰٪ اودو سنجیده شود، نه با ۹٪. در مقایسهٔ درست، اودو در درصد اصلی چهار واحد و در درصد نسبی سه واحد جلوتر از گیتی‌پسند است و هر دو بسیار عقب‌تر از ۸۶٪ و ۹۳٪ ماژول توسعه‌یافته می‌مانند.
+</div>
+<div class="mx-out b"><strong>نتیجه‌گیری درصد مطابقت</strong>
+با همین تعریف، درصد اصلی ماژول توسعه‌یافته ۸۶٪ است (۱۹ محور کامل از ۲۲) و با احتساب نسبی به ۹۳٪ می‌رسد. درصد اصلی Odoo 18 بومی فقط ۹٪ است (۲ محور کامل) و حتی با نیم‌امتیاز به محورهای نسبی از ۳۰٪ بالاتر نمی‌رود. درصد اصلی مدل گیتی‌پسند ۵٪ است (۱ محور کامل) و با احتساب نسبی ۲۷٪. فاصلهٔ درصد اصلی، نه عدد خوش‌بینانهٔ داخل پرانتز، نشان می‌دهد اختلاف این سه مرجع در پوشش واقعی اجزای مدل استاندارد است. اگر به OKR یا IDP وزن بیشتری داده شود، دو مرجع ضعیف‌تر عقب‌تر هم می‌مانند، چون در این محورها پوشش کامل ندارند.
+</div>
+</div>
+
+<div class="mx-block">
+<h3>۶.۳. شکاف‌های بحرانی (Gap Analysis)</h3>
+<table>
+<thead>
+<tr><th>شکاف</th><th>Appraisals بومی Odoo 18</th><th>مدل گیتی‌پسند</th><th>جبران شده در ماژول توسعه یافته مدیریت عملکرد کارکنان</th></tr>
+</thead>
+<tbody>
+<tr><td>نبود IDP مستقل</td><td class="cell-none">✘</td><td class="cell-none">✘</td><td class="cell-full">ماژول IDP با گردش تأیید</td></tr>
+<tr><td>نبود OKR سلسله‌مراتبی</td><td class="cell-none">✘</td><td class="cell-none">✘</td><td class="cell-partial">اهداف متصل به دوره (بدون Parent Goal)</td></tr>
+<tr><td>نبود Calibration رسمی</td><td class="cell-none">✘</td><td class="cell-none">✘</td><td class="cell-partial">وزن‌دهی شفاف + بازبینی نهایی (جبران نسبی)</td></tr>
+<tr><td>نبود بازخورد مستمر</td><td class="cell-none">✘</td><td class="cell-none">✘</td><td class="cell-full">ماژول بازخورد مستقل</td></tr>
+<tr><td>نبود کارنامهٔ رسمی</td><td class="cell-none">✘</td><td class="cell-partial">◐</td><td class="cell-full">کارنامهٔ ترکیبی + PDF + ارسال گروهی</td></tr>
+<tr><td>انتخاب دستی ۳۶۰</td><td class="gap-critical">✘ (بحرانی)</td><td class="cell-none">✘</td><td class="cell-full">انتخاب خودکار از چارت</td></tr>
+<tr><td>اهداف جزیره‌ای</td><td class="gap-critical">✘ (بحرانی)</td><td class="cell-none">✘</td><td class="cell-full">دسترسی پلکانی + اتصال به دوره</td></tr>
+<tr><td>نبود اجرای گروهی</td><td class="gap-critical">✘ (بحرانی)</td><td class="cell-partial">◐</td><td class="cell-full">تولید انبوه از چارت + خاتمهٔ یکجا</td></tr>
+<tr><td>محدودیت پورتال</td><td class="gap-critical">✘ (بحرانی)</td><td class="cell-na">—</td><td class="cell-full">RBAC سه‌سطحی</td></tr>
+<tr><td>نبود فارسی/RTL</td><td class="cell-none">✘</td><td class="cell-partial">◐</td><td class="cell-full">رابط کاملاً فارسی</td></tr>
+</tbody>
+</table>
+<div class="mx-out c"><strong>نتیجه‌گیری شکاف‌های بحرانی</strong>
+ده شکاف این جدول در Odoo بومی یا مدل گیتی‌پسند باز است. ماژول توسعه‌یافتهٔ مدیریت عملکرد کارکنان هشت مورد را کامل جبران کرده است: IDP، بازخورد مستمر، کارنامه، انتخاب ۳۶۰ از چارت، اتصال اهداف به دوره، اجرای گروهی، دسترسی نقش‌محور و رابط فارسی. دو مورد فقط نسبی بسته‌اند: OKR هنوز Parent Goal ندارد و Calibration به‌جای جلسهٔ رسمی، با وزن‌دهی و بازبینی نهایی جبران شده است. پس شکاف‌های عملیاتی پرتکرار (حجم ارزیابی، زبان، کارنامه و ۳۶۰) در ماژول توسعه‌یافته پوشش داده شده و دو شکاف طراحی باقی مانده است.
+</div>
+</div>
+
+<div class="mx-block">
+<h3>۶.۴. ماتریس Fit &amp; Gap مدل گیتی‌پسند در برابر Appraisals بومی Odoo 18</h3>
+<p>این ماتریس فقط دو مرجع را با هم می‌سنجد: قابلیت‌های توصیف‌شدهٔ مدل گیتی‌پسند (بخش ۵) در برابر امکانات بومی ماژول Appraisals در Odoo 18 (بخش ۳). «هم‌پوشانی» یعنی هر دو پوشش مشابه دارند؛ «شکاف گیتی‌پسند» یعنی اودو آن را دارد و مدل گیتی‌پسند ندارد؛ «شکاف اودو» یعنی مدل گیتی‌پسند آن را دارد و اودو ندارد؛ «شکاف مشترک» یعنی هیچ‌کدام پوشش قابل‌اتکا ندارند.</p>
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>محور مقایسه</th>
+  <th>مدل گیتی‌پسند</th>
+  <th>Appraisals بومی Odoo 18</th>
+  <th>نتیجه</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>۱</td><td>ارزیابی مدیر (بالا به پایین)</td><td class="cell-full">✔ الگوی ۹۰ درجه؛ مدیر ارزیاب است</td><td class="cell-full">✔ بازخورد مدیر در گردش ارزیابی</td><td class="cell-full">هم‌پوشانی</td></tr>
+<tr><td>۲</td><td>خودارزیابی کارمند</td><td class="cell-none">✘ در جریان اصلی دیده نمی‌شود</td><td class="cell-full">✔ سؤال خودارزیابی + کنترل Visibility</td><td class="cell-none">شکاف گیتی‌پسند</td></tr>
+<tr><td>۳</td><td>ارزیابی ۳۶۰ (همکار / زیرمجموعه)</td><td class="cell-none">✘</td><td class="cell-partial">◐ از مسیر Survey؛ انتخاب گیرنده کاملاً دستی</td><td class="cell-none">شکاف گیتی‌پسند</td></tr>
+<tr><td>۴</td><td>کتابخانهٔ معیار و زیرمعیار</td><td class="cell-full">✔ معیار، زیرمعیار و طیف لیکرت پیوسته</td><td class="cell-partial">◐ قالب سؤال متنی؛ چهار گزینهٔ کیفی، بدون کتابخانهٔ معیار/زیرمعیار</td><td class="cell-partial">شکاف اودو</td></tr>
+<tr><td>۵</td><td>فرم ساختاریافتهٔ ارزیابی</td><td class="cell-full">✔ فرم با شاخص‌های معیار/زیرمعیار</td><td class="cell-partial">◐ قالب پیش‌فرض و قالب بر اساس دپارتمان</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۶</td><td>چرخه با تاریخ و شرط استخدام</td><td class="cell-partial">◐ عملیات با شروع/پایان و شرط سابقه</td><td class="cell-partial">◐ برنامهٔ خودکار بر پایهٔ ماه‌های پس از استخدام؛ بدون فاز مستقل</td><td class="cell-full">هم‌پوشانی نسبی</td></tr>
+<tr><td>۷</td><td>محدودهٔ سازمانی / اجرا برای واحدها</td><td class="cell-partial">◐ انتخاب شرکت و واحد از نمودار سازمانی</td><td class="cell-none">✘ ایجاد گروهی بومی ندارد؛ زمان‌بندی فردبه‌فرد است</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۸</td><td>کارتابل ارزیاب و تأییدکننده</td><td class="cell-full">✔ کارتابل ارزیاب + کارتابل تأیید نهایی</td><td class="cell-partial">◐ گردش کارمند و مدیر؛ نقش تأییدکنندهٔ جداگانه ندارد</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۹</td><td>ثبت عملکرد ویژه (خارج از فرم دوره‌ای)</td><td class="cell-full">✔ فرم جدا برای عملکرد ویژه</td><td class="cell-none">✘</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۰</td><td>کارنامهٔ عملکرد</td><td class="cell-partial">◐ کارنامه با امتیاز معیارها؛ مشاهده در کارتابل</td><td class="cell-none">✘ کارنامهٔ رسمی و صدور خودکار ندارد</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۱</td><td>گزارش ارزیابی</td><td class="cell-partial">◐ گزارش ارزیابی کارکنان</td><td class="cell-partial">◐ Appraisal Analysis (گراف و گانت) + Skills Evolution مشروط</td><td class="cell-full">هم‌پوشانی نسبی</td></tr>
+<tr><td>۱۲</td><td>اهداف / OKR</td><td class="cell-none">✘</td><td class="cell-partial">◐ هدف با درصد پیشرفت؛ بدون Parent Goal</td><td class="cell-partial">شکاف گیتی‌پسند</td></tr>
+<tr><td>۱۳</td><td>مهارت‌ها</td><td class="cell-none">✘ در مدل توصیف‌شده نیست</td><td class="cell-full">✔ به‌روزرسانی سطح مهارت هنگام ارزیابی</td><td class="cell-none">شکاف گیتی‌پسند</td></tr>
+<tr><td>۱۴</td><td>جلسهٔ بازخورد</td><td class="cell-none">✘</td><td class="cell-partial">◐ اتصال به تقویم</td><td class="cell-none">شکاف گیتی‌پسند</td></tr>
+<tr><td>۱۵</td><td>برنامهٔ توسعهٔ فردی (IDP)</td><td class="cell-none">✘</td><td class="cell-none">✘</td><td class="cell-na">شکاف مشترک</td></tr>
+<tr><td>۱۶</td><td>بازخورد مستمر خارج از دوره</td><td class="cell-none">✘</td><td class="cell-none">✘ محدود به چرخه</td><td class="cell-na">شکاف مشترک</td></tr>
+<tr><td>۱۷</td><td>Calibration</td><td class="cell-none">✘</td><td class="cell-none">✘</td><td class="cell-na">شکاف مشترک</td></tr>
+<tr><td>۱۸</td><td>رابط فارسی و RTL</td><td class="cell-partial">◐ وابسته به پیاده‌سازی</td><td class="cell-none">✘ پشتیبانی بومی محدود</td><td class="cell-partial">شکاف اودو</td></tr>
+</tbody>
+</table>
+<div class="mx-out d"><strong>نتیجه‌گیری گیتی‌پسند در برابر Odoo 18</strong>
+این دو مرجع هم‌خانواده نیستند. هم‌پوشانی واقعی فقط در ارزیابی مدیر، چرخهٔ زمانی و گزارش ساده دیده می‌شود. گیتی‌پسند جایی جلوتر است که فرم معیار و زیرمعیار، محدودهٔ سازمانی، کارتابل تأیید، عملکرد ویژه و کارنامه می‌خواهد. Odoo 18 جایی جلوتر است که خودارزیابی، بازخورد همکاران، مهارت، جلسهٔ تقویمی و هدف فردی لازم است. هر دو در IDP، بازخورد مستمر و Calibration تهی‌اند. بنابراین جایگزین کردن یکی با دیگری، بخشی از نیاز سازمان را می‌پوشاند و بخش دیگر را حذف می‌کند.
+</div>
+</div>
+
+<div class="mx-block">
+<h3>۶.۵. ماتریس Fit &amp; Gap ماژول توسعه‌یافته در برابر Appraisals بومی Odoo 18</h3>
+<p>این ماتریس فقط ماژول توسعه‌یافته (بخش ۴) را با Appraisals بومی Odoo 18 (بخش ۳) مقایسه می‌کند. مبنا، همان ۲۲ محور بخش ۶.۱ است. «هم‌پوشانی» یعنی هر دو پوشش کامل دارند؛ «شکاف اودو» یعنی توسعه‌یافته آن محور را دارد و بومی ندارد یا فقط نسبی دارد.</p>
+<table>
+<thead>
+<tr>
+  <th>#</th>
+  <th>محور قابلیت</th>
+  <th>ماژول توسعه‌یافته</th>
+  <th>Appraisals بومی Odoo 18</th>
+  <th>نتیجه</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>۱</td><td>چرخهٔ زمان‌بندی‌شده</td><td class="cell-full">✔ دوره، باز شدن خودکار، مهلت هر فاز</td><td class="cell-partial">◐ ماه‌های پس از استخدام؛ بدون فازبندی</td><td class="cell-partial">شکاف اودو</td></tr>
+<tr><td>۲</td><td>قالب ارزیابی</td><td class="cell-full">✔ قالب هر نقش + پیش‌فرض</td><td class="cell-partial">◐ پیش‌فرض + سفارشی دپارتمان</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۳</td><td>خودارزیابی</td><td class="cell-full">✔</td><td class="cell-full">✔</td><td class="cell-full">هم‌پوشانی</td></tr>
+<tr><td>۴</td><td>ارزیابی مدیر</td><td class="cell-full">✔</td><td class="cell-full">✔</td><td class="cell-full">هم‌پوشانی</td></tr>
+<tr><td>۵</td><td>ارزیابی ۳۶۰</td><td class="cell-full">✔ انتخاب خودکار از چارت + ناشناس‌سازی</td><td class="cell-partial">◐ انتخاب دستی؛ وابسته به Surveys</td><td class="cell-partial">شکاف اودو</td></tr>
+<tr><td>۶</td><td>وزن‌دهی و امتیاز خودکار</td><td class="cell-full">✔ وزن شفاف + پیش‌نمایش</td><td class="cell-none">✘ امتیاز عمدتاً کیفی</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۷</td><td>اهداف و OKR</td><td class="cell-partial">◐ هدف و نتیجهٔ کلیدی متصل به دوره؛ بدون Parent Goal</td><td class="cell-none">✘ اهداف جزیره‌ای</td><td class="cell-partial">شکاف اودو</td></tr>
+<tr><td>۸</td><td>برنامهٔ توسعهٔ فردی</td><td class="cell-full">✔ ماژول IDP + گردش تأیید</td><td class="cell-none">✘</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۹</td><td>بازخورد مستمر</td><td class="cell-full">✔ مستقل از دوره</td><td class="cell-none">✘ محدود به چرخه</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۰</td><td>جلسهٔ بازخورد</td><td class="cell-full">✔ ثبت برگزاری و جمع‌بندی</td><td class="cell-partial">◐ فقط ادغام با تقویم</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۱۱</td><td>Calibration</td><td class="cell-partial">◐ وزن‌دهی و بازبینی نهایی؛ جلسهٔ رسمی ندارد</td><td class="cell-none">✘</td><td class="cell-partial">شکاف اودو</td></tr>
+<tr><td>۱۲</td><td>کارنامهٔ رسمی</td><td class="cell-full">✔ امتیاز ترکیبی، رتبه، PDF، صدور فردی/گروهی</td><td class="cell-none">✘</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۳</td><td>گزارش تحلیلی</td><td class="cell-full">✔ داشبورد، پایش زنده، ۹ گزارش</td><td class="cell-partial">◐ Appraisal Analysis و Skills Evolution مشروط</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۱۴</td><td>پایش زندهٔ رویدادها</td><td class="cell-full">✔</td><td class="cell-none">✘</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۵</td><td>اجرای گروهی</td><td class="cell-full">✔ تولید انبوه از چارت + خاتمهٔ یکجا</td><td class="cell-none">✘</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۶</td><td>کنترل دسترسی</td><td class="cell-full">✔ سه سطح نقش‌محور</td><td class="cell-partial">◐ داخلی/پورتال؛ پورتال برای خودارزیابی کافی نیست</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۱۷</td><td>فارسی و RTL</td><td class="cell-full">✔</td><td class="cell-none">✘ محدود</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۱۸</td><td>تخصیص ارزیاب از چارت</td><td class="cell-full">✔ خودکار و پویا</td><td class="cell-partial">◐ فقط مدیر مستقیم به‌صورت پیش‌فرض</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۱۹</td><td>داده برای ISO 30414</td><td class="cell-partial">◐ داده هست؛ گزارش اختصاصی ISO نیست</td><td class="cell-none">✘</td><td class="cell-partial">شکاف اودو</td></tr>
+<tr><td>۲۰</td><td>پیوند شایستگی و توسعه</td><td class="cell-full">✔ IDP + کتابخانهٔ معیار</td><td class="cell-none">✘</td><td class="cell-none">شکاف اودو</td></tr>
+<tr><td>۲۱</td><td>داده برای بازنگری مدیریت</td><td class="cell-full">✔ گزارش‌های متعدد</td><td class="cell-partial">◐ گزارش محدود</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+<tr><td>۲۲</td><td>مقیاس امتیاز</td><td class="cell-full">✔ بازه، سطح، اعشاری</td><td class="cell-partial">◐ چهار گزینهٔ کیفی</td><td class="cell-partial">شکاف نسبی اودو</td></tr>
+</tbody>
+</table>
+<div class="mx-out e"><strong>نتیجه‌گیری ماژول توسعه‌یافته در برابر Odoo 18</strong>
+از ۲۲ محور، فقط خودارزیابی و ارزیابی مدیر هم‌پوشانی کامل دارند. در بیست محور دیگر نسخهٔ بومی عقب است: وزن‌دهی، IDP، بازخورد مستمر، کارنامه، پایش زنده، اجرای گروهی و فارسی شکاف کامل‌اند و قالب، ۳۶۰، گزارش، دسترسی و مقیاس امتیاز شکاف نسبی. در متن گزارش محوری نیست که Appraisals بومی از ماژول توسعه‌یافته جلوتر باشد. فاصلهٔ باقی‌ماندهٔ خود ماژول توسعه‌یافته نسبت به مدل استاندارد، نه نسبت به اودو، همان نبود Parent Goal و نبود جلسهٔ رسمی Calibration است.
+</div>
+</div>
+
+<h2>۷. نتیجهٔ تحلیل و توصیهٔ تصمیم‌گیری</h2>
+
+<h3>۷.۱. جمع‌بندی تحلیلی</h3>
+<p><strong>۱. ماژول توسعه‌یافته:</strong> ۱۹ پوشش کامل، ۳ پوشش نسبی، ۰ عدم پوشش. درصد اصلی ۸۶٪ و با احتساب نسبی ۹۳٪. یعنی بیش از چهار پنجم محورها واقعاً موجود است و هیچ محوری خالی نمانده. سه محور نسبی همان فاصلهٔ باقی‌مانده با مدل استاندارد است (سلسله‌مراتب کامل OKR، Calibration رسمی، و گزارش اختصاصی ISO 30414) و نباید با ۱۹ محور کامل یکی شمرده شود. حتی اگر فقط به عدد خوش‌بینانه نگاه شود، این مرجع همچنان تنها گزینه‌ای است که از ۹۰٪ عبور می‌کند.</p>
+<p><strong>۲. Appraisals بومی Odoo 18:</strong> ۲ پوشش کامل، ۹ پوشش نسبی، ۱۱ عدم پوشش. درصد اصلی ۹٪ و با احتساب نسبی ۳۰٪. دو محور کامل (خودارزیابی و ارزیابی مدیر) تمام سهم درصد اصلی است. نُه محور نسبی تصویر را تا ۳۰٪ بالا می‌برد، اما طبق راهنمای جدول این نیم‌پوشش به‌معنای حل‌شدن نیست. یازده محور، یعنی نیمی از خط پایه، اصلاً پوشش ندارد. فاصلهٔ درصد اصلی با ماژول توسعه‌یافته ۷۷ واحد است (۸۶ در برابر ۹) و حتی در عدد داخل پرانتز هم ۶۳ واحد می‌ماند (۹۳ در برابر ۳۰).</p>
+<p><strong>۳. مدل گیتی‌پسند:</strong> ۱ پوشش کامل، ۱۰ پوشش نسبی، ۱۱ عدم پوشش. درصد اصلی ۵٪ و با احتساب نسبی ۲۷٪. تنها یک محور کامل در درصد اصلی حساب می‌شود؛ ۲۷٪ عدد تصمیم نیست و فقط اثر ده پوشش نصفه است. یازده محور بدون پوشش، هم‌اندازهٔ Odoo 18 است، اما چون پوشش کامل کمتر است درصد اصلی پایین‌تر می‌ماند (۵ در برابر ۹). فاصله با ماژول توسعه‌یافته در درصد اصلی ۸۱ واحد است (۸۶ در برابر ۵) و در عدد نسبی ۶۶ واحد (۹۳ در برابر ۲۷).</p>
+
+<h3>۷.۲. توصیهٔ تصمیم‌گیری</h3>
+<table>
+<thead>
+<tr><th>نیاز سازمان</th><th>گزینهٔ پیشنهادی</th><th>دلیل</th></tr>
+</thead>
+<tbody>
+<tr><td>استقرار سریع و کم‌هزینهٔ ارزیابی مدیرمحور</td><td class="cell-partial">مدل گیتی‌پسند</td><td>سادگی فرایند، هزینهٔ پایین، اجرای آسان در ساختار سلسله‌مراتبی</td></tr>
+<tr><td>نیازهای پایهٔ ارزیابی در سازمان کوچک</td><td class="cell-partial">Appraisals بومی Odoo 18</td><td>پوشش خودارزیابی و ارزیابی مدیر، ادغام با تقویم و منابع انسانی Odoo</td></tr>
+<tr><td>۳۶۰ درجهٔ واقعی، IDP، بازخورد مستمر و اجرای گروهی در مقیاس بزرگ</td><td class="cell-full">ماژول توسعه‌یافته</td><td>پوشش ۸۶٪ از Baseline، جبران شکاف‌های بحرانی Odoo بومی، رابط فارسی و RTL</td></tr>
+</tbody>
+</table>
+
+<h3>۷.۳. محدودیت‌های تحلیل</h3>
+<ul>
+  <li>درصدهای مطابقت بر پایهٔ ۲۲ محور قابلیت و با وزن یکسان محاسبه شده‌اند؛ در صورت وزن‌دهی متفاوت (مثلاً وزن بیشتر برای OKR و IDP)، درصد نهایی تغییر می‌کند.</li>
+  <li>ادعای «نوآوری» در پایش زندهٔ رویدادها بر پایهٔ بررسی مستندات رسمی Odoo 18 و 19 و ماژول‌های رایج مدیریت عملکرد است؛ ممکن است ماژول‌های شخص ثالث ناشناخته‌ای وجود داشته باشند که در این بررسی لحاظ نشده‌اند.</li>
+</ul>
+
+</div><!-- پایان report-content -->
+<div class="report-sign">تحلیل، طراحی و توسعه: علیرضا مختاری<span class="upd">(آخرین بروزرسانی: ۱۴۰۵/۰۹/۰۴)</span></div>
+
+<script>
+(function () {
+  var root = document.getElementById('report-content');
+  if (!root) return;
+  var nodes = Array.prototype.slice.call(root.childNodes);
+  var sections = [];
+  var current = null;
+  nodes.forEach(function (node) {
+    if (node.nodeType === 1 && node.tagName === 'H2') {
+      current = { h2: node, kids: [] };
+      sections.push(current);
+    } else if (current) {
+      current.kids.push(node);
+    }
+  });
+  var numRe = /^([\u06F0-\u06F90-9]+)\s*[\.\u06D4\-\u2013\u2014]\s*/;
+  var subRe = /^([\u06F0-\u06F90-9]+(?:[\.\u06D4\-][\u06F0-\u06F90-9]+)?)\s*[\)\.\u06D4\-\u2013\u2014]?\s*/;
+  sections.forEach(function (sec, i) {
+    var wrap = document.createElement('section');
+    sec.wrap = wrap;
+    wrap.className = 'rsec';
+    var head = document.createElement('button');
+    head.type = 'button';
+    head.className = 'rsec-head';
+    head.setAttribute('aria-expanded', 'false');
+    var badge = document.createElement('span');
+    badge.className = 'rsec-num';
+    var raw = sec.h2.textContent.replace(/^\s+|\s+$/g, '');
+    var m = raw.match(numRe);
+    badge.textContent = m ? m[1] : String(i + 1);
+    if (m) sec.h2.textContent = raw.slice(m[0].length);
+    var chev = document.createElement('span');
+    chev.className = 'rsec-chev';
+    chev.setAttribute('aria-hidden', 'true');
+    head.appendChild(badge);
+    head.appendChild(sec.h2);
+    head.appendChild(chev);
+    var panel = document.createElement('div');
+    panel.className = 'rsec-panel';
+    var body = document.createElement('div');
+    body.className = 'rsec-body';
+    sec.kids.forEach(function (k) { body.appendChild(k); });
+    body.querySelectorAll('h3').forEach(function (h3) {
+      var t = h3.textContent.replace(/^\s+|\s+$/g, '');
+      var mm = t.match(subRe);
+      if (!mm || mm[1].length < 2) return;
+      var lab = document.createElement('span');
+      lab.className = 'rsub-num';
+      lab.textContent = mm[1];
+      h3.textContent = t.slice(mm[0].length);
+      h3.insertBefore(lab, h3.firstChild);
+    });
+    head.addEventListener('click', function () {
+      var open = wrap.classList.toggle('open');
+      head.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    panel.appendChild(body);
+    wrap.appendChild(head);
+    wrap.appendChild(panel);
+  });
+  var box = document.createElement('div');
+  box.className = 'report-box';
+  sections.forEach(function (sec) { box.appendChild(sec.wrap); });
+  root.appendChild(box);
+  window.setAllSections = function (open) {
+    box.querySelectorAll('.rsec').forEach(function (sec) {
+      sec.classList.toggle('open', !!open);
+      var btn = sec.querySelector('.rsec-head');
+      if (btn) btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+  };
+})();
+</script>
+
+<script>
+function saveAsHTML() {
+  const content = document.getElementById('report-content').innerHTML;
+  const style = document.querySelector('style').innerHTML;
+  const fullHTML = `<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>گزارش تحلیل Fit & Gap مدیریت عملکرد کارکنان</title>
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css" />
+<style>${style}</style>
+</head>
+<body><div id="report-content">${content}</div></body>
+</html>`;
+  downloadFile(fullHTML, 'گزارش-Fit-Gap-مدیریت-عملکرد.html', 'text/html;charset=utf-8');
+}
+
+function saveAsDoc() {
+  const content = document.getElementById('report-content').innerHTML;
+  const style = document.querySelector('style').innerHTML;
+  const docHTML = `<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="UTF-8">
+<title>گزارش Fit & Gap</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom></w:WordDocument></xml><![endif]-->
+<style>${style}</style>
+</head>
+<body dir="rtl"><div id="report-content">${content}</div></body>
+</html>`;
+  downloadFile(docHTML, 'گزارش-Fit-Gap-مدیریت-عملکرد.doc', 'application/msword;charset=utf-8');
+}
+
+function downloadFile(content, filename, mimeType) {
+  const blob = new Blob(['\ufeff', content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+</script>
+
+</body>
+</html>
